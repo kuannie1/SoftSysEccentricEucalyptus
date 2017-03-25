@@ -27,11 +27,8 @@ A tokenizer. More about tokenization [here](https://en.wikipedia.org/wiki/Tokeni
 
 ###Files
 
-#### config.in
-names value pairs separated by a colon
+**config.in**: names value pairs separated by a colon
 
-#### myscanner.l
-explanation of lex file: https://youtu.be/54bo1qaHAfk?t=16m29s 
+**myscanner.l**: explanation of lex file: https://youtu.be/54bo1qaHAfk?t=16m29s 
 
-#### myscanner.c
-The c file that takes the config, lex, and c files to tokenize
+**myscanner.c**: The c file that takes the config, lex, and c files to tokenize
