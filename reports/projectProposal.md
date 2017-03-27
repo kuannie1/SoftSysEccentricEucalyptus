@@ -7,7 +7,7 @@ published: true
 ---
 # Project Proposal - Eccentric Eucalyptus
 
-**1) State the goal of your project, ideally including a lower bound you are confident you can achieve and a stretch goal that is more ambitious. **
+# **1) State the goal of your project, ideally including a lower bound you are confident you can achieve and a stretch goal that is more ambitious. **
 
 We are coding a language interpreter using C. Our goal is to solidify our skills in C and to learn more about programming languages. Our lower bound would be a lisp interpreter, and our upper bound would be a general language interpreter. If we pursue this upper bound, we will need to talk to Professor Pucella and learn how programming languages work. 
 
