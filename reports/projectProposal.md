@@ -33,7 +33,7 @@ We are coding a language interpreter using C. Our goal is to solidify our skills
 
 * [Trello](https://trello.com/b/nbNxuLH8/softsyseccentriceucalyptus)
 
-** 5) Enumerate potential roadblocks and ways instructors can help.  Do you need materials?  Do you have show-stopping questions you have not been able to answer?**
+**5) Enumerate potential roadblocks and ways instructors can help.  Do you need materials?  Do you have show-stopping questions you have not been able to answer?**
 
 We think that some of the major hurdles we will face are understanding the theory behind programming languages and code structure. We are coming in without much domain knowledge about how programming languages work, so we will have to do a lot of learning in order to get something that works. This is also a project that could potentially be very large, with a lot of text parsing, so we will need to be very careful to make our code legible and modular. 
 
