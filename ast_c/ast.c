@@ -9,12 +9,12 @@ This code represents an abstract syntax tree, with make functions for each of th
 #include "ast.h"
 
 ast *make_binaryExp ( char* operator, ast* left, ast* right ) {
-  ast *e = malloc(sizeof(ast));
-  e->tag = binary_exp;
-  e->op.binaryExp.operator = operator;
-  e->op.binaryExp.left = left;
-  e->op.binaryExp.right = right;
-  return e;
+	ast *e = malloc(sizeof(ast));
+	e->tag = binary_exp;
+	e->op.binaryExp.operator = operator;
+	e->op.binaryExp.left = left;
+	e->op.binaryExp.right = right;
+	return e;
 };
 
 ast *make_unaryExp( char* operator, ast* operand ) {
