@@ -36,6 +36,9 @@ typedef struct Exp_list {
 
 ast *make_binaryExp ( char* operator, ast* left, ast* right );
 ast *make_unaryExp( char* operator, ast* operand );
-ast *make_integerExp( int integerExp);
+ast *make_integerExp( int integerExp );
+ast* make_stringExp( char* stringExp );
+ast* make_variableExp( char* variableExp );
 ast* make_callExp( char* name, ast_list* arguments );
-ast* make_projectionExp( char* record, char* attribute);
+ast* make_projectionExp( ast* record, char* attribute );
+ast* make_recordExp( char* attribute, ast* value, struct rec* next );
