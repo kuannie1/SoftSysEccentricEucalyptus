@@ -82,7 +82,9 @@ This is the backlog that will guide us to combining our knowledge and creating o
 
 * Making a function that returns the next token from the lexer
 
-* Incorporating variable assignment
+* Incorporating variable assignment and functions
+
+* Representing variables and functions in the Abstract Syntax Tree
 
 ## Potential Roadblocks
 
