@@ -1,5 +1,5 @@
 /*
-A recursive descent parser implementation in C, using the ast struct by Leonidas Farigas. 
+Evaluates an abstract syntax tree in C, using the ast struct by Leonidas Farigas. 
 Currently supports: addition, subtraction, multiplication, divition, negative numbers. 
 By Margo Crawford.
 */
