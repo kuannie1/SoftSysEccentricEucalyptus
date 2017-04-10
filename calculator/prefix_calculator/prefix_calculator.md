@@ -7,4 +7,7 @@ Lisp is commonly used as a first class functional programming language. In this 
 
 ## Examples
 (+ 1 1) = 2  
+
+
 (+ (+ 1 1) (- 2 1) (* 1 2) (/ 1 2)) = 5.5
+[terminal capture](images/example1.png)
