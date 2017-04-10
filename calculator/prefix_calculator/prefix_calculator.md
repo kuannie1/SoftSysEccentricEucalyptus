@@ -2,7 +2,7 @@
 ## Motivation
 Lisp is commonly used as a first class functional programming language. In this example, we have built a lisp like calculator to explore and understand how to use BISON and FLEX.
 
-## Yacc Grammar
+## Yacc Grammatical Rules
 Yacc requires grammatical rules to parse and make the abstract syntax tree. We choose to base our rules around finding parenthesis and their following functions. Here we see a '(' '+' reduced to an A token initialized with the value of 0. Then following A F patterns are absorbed into the A token and added to the result. Finally, once the tree has been reduced to an F, its value is printed out.
 ~~~
 S : F           {printf("%f\n", $1);}
