@@ -435,7 +435,7 @@ static const yytype_uint8 yytranslate[] =
 static const yytype_uint8 yyrline[] =
 {
        0,    18,    18,    21,    22,    25,    28,    31,    32,    35,
-      36,    39,    40,    43,    44,    45,    46,    47,    48,    50
+      36,    39,    40,    43,    44,    45,    46,    47,    48,    49
 };
 #endif
 
@@ -1317,7 +1317,7 @@ yyreduce:
     break;
 
   case 19:
-#line 50 "calc.y" /* yacc.c:1646  */
+#line 49 "calc.y" /* yacc.c:1646  */
     {(yyval.f) = -(yyvsp[0].f);}
 #line 1323 "y.tab.c" /* yacc.c:1646  */
     break;
@@ -1551,7 +1551,7 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 54 "calc.y" /* yacc.c:1906  */
+#line 53 "calc.y" /* yacc.c:1906  */
 
 
 void yyerror(char *msg){

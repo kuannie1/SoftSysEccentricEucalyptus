@@ -7,16 +7,16 @@ Yacc requires grammatical rules to parse and make the abstract syntax tree. We c
 
 YACC grammar for a fully functional lisp like calculator that can add positive and negative numbers.
 ~~~
-S : F           {printf("%f\n", $1);}
+S : F           {printf("%f\n", $1);} // Print out final value
   ;
 
-A : '(' '+'     {$$ = 0;}
-  | A F         {$$ = $1 + $2;}
+A : '(' '+'     {$$ = 0;}       // Initialize A token with value 0
+  | A F         {$$ = $1 + $2;} // Subsequent F tokens are added to A token
   ;
 
-F : NUM         {$$ = $1;}
-  | '-' F       {$$ = -$2;}
-  | A ')'       {$$ = $1;}
+F : NUM         {$$ = $1;}  // All NUM's become F token
+  | '-' F       {$$ = -$2;} // Handle negative numbers
+  | A ')'       {$$ = $1;}  // Reduce A token to F once parenthesis close
   ;
 ~~~
 
