@@ -1,4 +1,4 @@
-The Abstract Syntax Tree and Parser create and parse syntax trees for basic arithmetic expressions. It is functional for additon, subtraction, multiplication and division, with positive and negative numbers. For example, 
+The Abstract Syntax Tree and Parser create and parse syntax trees for basic arithmetic expressions and integer variables. It is functional for additon, subtraction, multiplication and division, with positive and negative numbers. For example, 
 ```c
 ast* additionexp = make_binaryExp("*", 
 			make_binaryExp("+", 
@@ -14,4 +14,4 @@ will evaluate it to 40.
 
 To use:
 
-Run `make rdp`.
+Run `make eval`.

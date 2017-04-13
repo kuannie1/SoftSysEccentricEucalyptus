@@ -1,12 +1,15 @@
 /*
 Evaluates an abstract syntax tree in C, using the ast struct by Leonidas Farigas. 
-Currently supports: addition, subtraction, multiplication, divition, negative numbers. 
+Currently supports: addition, subtraction, multiplication, divition, negative numbers, integer variables.
 By Margo Crawford.
+
 */
 #include <stdlib.h>
 #include <stdio.h>
+#include <glib.h>
 #include "ast.h"
 
+GHashTable* hash; 
 
 int parser(ast* expression) {
 	//binary expression
@@ -45,14 +48,27 @@ int parser(ast* expression) {
 	else if (expression->tag == integer_exp) {
 		return expression->op.integerExp;
 	}
+	//variable
+	else if (expression->tag == variable_exp ) {
+		gpointer* val = g_hash_table_lookup(hash, expression->op.variableExp);
+		if (val != NULL) {
+			return GPOINTER_TO_INT(val);
+		}
+	}
 }
 
 
 
 int main() {
 
-	//(-5+7) * 20
-	ast* additionexp = make_binaryExp("*", make_binaryExp("+", make_unaryExp("-", make_integerExp(5)), make_integerExp(7)), make_integerExp(20));
+	hash = g_hash_table_new(g_str_hash, g_str_equal); //a hashtable with strings as keys.
+
+	ast* variable = make_variableExp("x");
+	g_hash_table_insert(hash, "x", GINT_TO_POINTER(6));
+
+	//x = 6
+	//(-5+7) * x
+	ast* additionexp = make_binaryExp("*", make_binaryExp("+", make_unaryExp("-", make_integerExp(5)), make_integerExp(7)), variable);
 	int retval = parser(additionexp);
 	printf("%i\n", retval);
 	return 0;

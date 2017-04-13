@@ -1,5 +1,5 @@
 ast.o: ast.c ast.h
 	gcc -c ast.c
 
-rdp: ast.o rdp.c
-	gcc ast.o rdp.c -o rdp
+eval: ast.o eval.c
+	gcc ast.o eval.c -o eval `pkg-config --cflags --libs glib-2.0`
