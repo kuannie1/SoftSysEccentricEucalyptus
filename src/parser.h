@@ -4,16 +4,16 @@
 typedef enum function{
     ADD,
     MULT,
-    INTEGER //pretty sure INT is a keyword
+    FLT //pretty sure INT is a keyword
 } Function;
 
 typedef union ast_val{
-    int integer;
+    float flt;
 }AstVal;
 
 typedef struct exp{
     Function func;
-    struct exp* left, right;
+    struct exp *left, *right;
     AstVal *value;
 }Exp;
 
