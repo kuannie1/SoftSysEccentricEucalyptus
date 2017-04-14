@@ -11,11 +11,11 @@ typedef union ast_val{
     int integer;
 }AstVal;
 
-typedef struct exp{
+typedef struct ast_node{
     Function func;
-    struct exp* left;
-    struct exp* right;
+    struct ast_node* left;
+    struct ast_node* right;
     AstVal *value;
-}Exp;
+}Ast_Node;
 
 #endif
