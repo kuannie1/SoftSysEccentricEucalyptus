@@ -30,8 +30,7 @@ int main(int argc, char** argv){
     }
     char* filename = argv[1];
     char* code = get_code(filename);
-    puts(code);
-return 0;
+
     //TODO: pass to parser/lexer, get AST
     Exp* ast;
 
