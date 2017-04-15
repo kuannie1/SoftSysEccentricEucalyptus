@@ -13,7 +13,7 @@ void yyerror(char *msg);
 }
 
 %token <f> NUM
-%type <node> exp, S
+%type <node> exp S
 
 %%
 
