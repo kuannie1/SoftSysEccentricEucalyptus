@@ -13,7 +13,7 @@ typedef union ast_val{
 
 typedef struct ast_node{
     Function func;
-    struct exp *left, *right;
+    struct ast_node *left, *right;
     AstVal *value;
 }Ast_Node;
 
