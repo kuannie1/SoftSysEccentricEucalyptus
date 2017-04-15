@@ -9,7 +9,7 @@ void yyerror(char *msg);
 
 %union {
   float f;
-  Ast_Node* node;
+  struct ast_node* node; //can't use typedefs here for some reason
 }
 
 %token <f> NUM

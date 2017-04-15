@@ -59,7 +59,7 @@ union YYSTYPE
 #line 10 "parser.y" /* yacc.c:1909  */
 
   float f;
-  Ast_Node* node;
+  struct ast_node* node;
 
 #line 65 "y.tab.h" /* yacc.c:1909  */
 };

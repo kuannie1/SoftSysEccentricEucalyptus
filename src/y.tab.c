@@ -120,7 +120,7 @@ union YYSTYPE
 #line 10 "parser.y" /* yacc.c:355  */
 
   float f;
-  Ast_Node* node;
+  struct ast_node* node;
 
 #line 126 "y.tab.c" /* yacc.c:355  */
 };

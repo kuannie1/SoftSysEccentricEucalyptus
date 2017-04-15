@@ -1,10 +1,10 @@
 #ifndef parser_h
-# define parser_h
+#define parser_h
 
 typedef enum function{
     ADD,
     MULT,
-    FLT //pretty sure INT is a keyword
+    FLT
 } Function;
 
 typedef union ast_val{
