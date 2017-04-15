@@ -16,23 +16,33 @@ void yyerror(char *msg);
 
 %%
 
-S : F           {printf("%f\n", $1);} // Print out final value
+S : exp             {printf("%d\n", $1.func);} // Print out final value
   ;
 
-A : '(' '+'     {$$ = 0;} // Initialize A token with value 0
-  | A F         {$$ = $1 + $2;} // Subsequent F tokens are added to A token
-  ;
-
-exp : NUM                  {$$ = ();} // All NUM's become F token
-    | '(' '*' exp exp ')'  {$$ = make_ast_node_function(MULT, $3, $4)}
-    | '(' '+' exp exp ')'
+exp : NUM                  {$$ = make_ast_node_function($1);}
+    | '(' '*' exp exp ')'  {$$ = make_ast_node_function(MULT, $3, $4);}
+    | '(' '+' exp exp ')'  {$$ = make_ast_node_function(ADD, $3, $4);}
+    | '(' exp ')'          {$$ = $2;}
     ;
-
 
 %%
 
-Ast_Node* make_ast_node_function(Function funct, Ast_){
-  Ast_Node* new_function
+Ast_Node* make_ast_node_function(Function func, Ast_Node* left, Ast_Node* right){
+  Ast_Node* node = malloc(sizeof(Ast_Node));
+  node->func = func;
+  node->value = NULL;
+  node->left = left;
+  node->right = right;
+  return node;
+}
+
+Ast_Node* make_ast_node_value(float value){
+  Ast_Node* node = malloc(sizeof(Ast_Node));
+  node->func = FLT; // values are always floats
+  node->value = value;
+  node->left = NULL; // values don't have progeny
+  node->right = NULL;
+  return node;
 }
 
 void yyerror(char *msg){
