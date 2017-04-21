@@ -69,9 +69,12 @@
 #include "parser.h"
 
 extern int yylex();
+extern FILE *yyin;
 void yyerror(char *msg);
 
-#line 75 "y.tab.c" /* yacc.c:339  */
+struct ast_node* ast;
+
+#line 78 "y.tab.c" /* yacc.c:339  */
 
 # ifndef YY_NULLPTR
 #  if defined __cplusplus && 201103L <= __cplusplus
@@ -117,12 +120,12 @@ extern int yydebug;
 
 union YYSTYPE
 {
-#line 10 "parser.y" /* yacc.c:355  */
+#line 13 "parser.y" /* yacc.c:355  */
 
-  float f;
-  struct ast_node* node; //can't use typedefs here for some reason
+    float f;
+    struct ast_node* node; //can't use typedefs here for some reason
 
-#line 126 "y.tab.c" /* yacc.c:355  */
+#line 129 "y.tab.c" /* yacc.c:355  */
 };
 
 typedef union YYSTYPE YYSTYPE;
@@ -139,7 +142,7 @@ int yyparse (void);
 
 /* Copy the second part of user declarations.  */
 
-#line 143 "y.tab.c" /* yacc.c:358  */
+#line 146 "y.tab.c" /* yacc.c:358  */
 
 #ifdef short
 # undef short
@@ -436,7 +439,7 @@ static const yytype_uint8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    20,    20,    23,    24,    25,    26
+       0,    23,    23,    26,    27,    28,    29
 };
 #endif
 
@@ -1207,37 +1210,37 @@ yyreduce:
   switch (yyn)
     {
         case 2:
-#line 20 "parser.y" /* yacc.c:1646  */
-    {printf("0\n");}
-#line 1213 "y.tab.c" /* yacc.c:1646  */
+#line 23 "parser.y" /* yacc.c:1646  */
+    {ast = (yyvsp[0].node); return 0;}
+#line 1216 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 3:
-#line 23 "parser.y" /* yacc.c:1646  */
+#line 26 "parser.y" /* yacc.c:1646  */
     {(yyval.node) = make_ast_node_value((yyvsp[0].f));}
-#line 1219 "y.tab.c" /* yacc.c:1646  */
+#line 1222 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 4:
-#line 24 "parser.y" /* yacc.c:1646  */
+#line 27 "parser.y" /* yacc.c:1646  */
     {(yyval.node) = make_ast_node_function(MULT, (yyvsp[-2].node), (yyvsp[-1].node));}
-#line 1225 "y.tab.c" /* yacc.c:1646  */
+#line 1228 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 5:
-#line 25 "parser.y" /* yacc.c:1646  */
+#line 28 "parser.y" /* yacc.c:1646  */
     {(yyval.node) = make_ast_node_function(ADD, (yyvsp[-2].node), (yyvsp[-1].node));}
-#line 1231 "y.tab.c" /* yacc.c:1646  */
+#line 1234 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 6:
-#line 26 "parser.y" /* yacc.c:1646  */
+#line 29 "parser.y" /* yacc.c:1646  */
     {(yyval.node) = (yyvsp[-1].node);}
-#line 1237 "y.tab.c" /* yacc.c:1646  */
+#line 1240 "y.tab.c" /* yacc.c:1646  */
     break;
 
 
-#line 1241 "y.tab.c" /* yacc.c:1646  */
+#line 1244 "y.tab.c" /* yacc.c:1646  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -1465,34 +1468,43 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 29 "parser.y" /* yacc.c:1906  */
+#line 32 "parser.y" /* yacc.c:1906  */
 
 
 Ast_Node* make_ast_node_function(Function func, Ast_Node* left, Ast_Node* right){
-  Ast_Node* node = malloc(sizeof(Ast_Node));
-  node->func = func;
-  node->value = NULL;
-  node->left = left;
-  node->right = right;
-  return node;
+    Ast_Node* node = malloc(sizeof(Ast_Node));
+    node->func = func;
+    node->value = NULL;
+    node->left = left;
+    node->right = right;
+    return node;
 }
 
 Ast_Node* make_ast_node_value(float value){
-  Ast_Node* node = malloc(sizeof(Ast_Node));
-  node->func = FLT; // values are always floats
-  node->value = malloc(sizeof(AstVal));
-  node->value->flt = value;
-  node->left = NULL; // values don't have progeny
-  node->right = NULL;
-  return node;
+    Ast_Node* node = malloc(sizeof(Ast_Node));
+    node->func = FLT; // values are always floats
+    node->value = malloc(sizeof(AstVal));
+    node->value->flt = value;
+    node->left = NULL; // values don't have progeny
+    node->right = NULL;
+    return node;
 }
 
 void yyerror(char *msg){
-  fprintf(stderr, "%s\n", msg);
-  exit(1);
+    fprintf(stderr, "%s\n", msg);
+    exit(1);
+}
+
+Ast_Node* build_tree(FILE* code){
+    yyin = code;
+    do {
+        yyparse();
+    } while (!feof(yyin));
+    return ast;
 }
 
 int main() {
-  yyparse();
-  return 0;
+    printf("%i\n", yyparse());
+    printf("%i\n", ast->func);
+    return 0;
 }

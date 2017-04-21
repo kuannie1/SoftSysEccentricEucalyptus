@@ -43,20 +43,23 @@ int main(int argc, char** argv){
         exit(1);
     }
     char* filename = argv[1];
-    char* code = get_code(filename);
+    FILE *file = fopen(filename, "r");
+    // char* code = get_code(filename);
 
     //TODO: pass to parser/lexer, get AST
-    Ast_Node* ast = malloc(sizeof(Ast_Node));
-    ast->func = ADD;
-    ast->left = malloc(sizeof(Ast_Node));
-    ast->right = malloc(sizeof(Ast_Node));
+    // Ast_Node* ast = malloc(sizeof(Ast_Node));
+    // ast->func = ADD;
+    // ast->left = malloc(sizeof(Ast_Node));
+    // ast->right = malloc(sizeof(Ast_Node));
 
-    ast->left->func = FLT;
-    ast->left->value = malloc(sizeof(AstVal));
-    ast->left->value->flt = 5.5;
-    ast->right->func = FLT;
-    ast->right->value = malloc(sizeof(AstVal));
-    ast->right->value->flt = 6;
+    // ast->left->func = FLT;
+    // ast->left->value = malloc(sizeof(AstVal));
+    // ast->left->value->flt = 5.5;
+    // ast->right->func = FLT;
+    // ast->right->value = malloc(sizeof(AstVal));
+    // ast->right->value->flt = 6;
+
+    Ast_Node* ast = build_tree(file);
 
     float expression = eval(ast);
     printf("%f\n", expression);

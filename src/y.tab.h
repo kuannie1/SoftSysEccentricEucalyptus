@@ -56,10 +56,10 @@ extern int yydebug;
 
 union YYSTYPE
 {
-#line 10 "parser.y" /* yacc.c:1909  */
+#line 13 "parser.y" /* yacc.c:1909  */
 
-  float f;
-  struct ast_node* node; //can't use typedefs here for some reason
+    float f;
+    struct ast_node* node; //can't use typedefs here for some reason
 
 #line 65 "y.tab.h" /* yacc.c:1909  */
 };

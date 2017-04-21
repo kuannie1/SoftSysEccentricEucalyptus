@@ -1,6 +1,8 @@
 #ifndef parser_h
 #define parser_h
 
+#include <stdio.h>
+
 typedef enum function{
     ADD,
     MULT,
@@ -19,5 +21,6 @@ typedef struct ast_node{
 
 Ast_Node* make_ast_node_function(Function func, Ast_Node* left, Ast_Node* right);
 Ast_Node* make_ast_node_value(float value);
+Ast_Node* build_tree(FILE* code);
 
 #endif
