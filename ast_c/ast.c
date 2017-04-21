@@ -6,6 +6,7 @@ This code represents an abstract syntax tree, with make functions for each of th
 */
 
 #include <stdlib.h>
+#include <stdio.h>
 #include "ast.h"
 
 ast *make_binaryExp ( char* operator, ast* left, ast* right ) {

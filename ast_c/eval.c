@@ -11,14 +11,14 @@ By Margo Crawford.
 
 GHashTable* hash; 
 
-int parser(ast* expression) {
+int eval(ast* expression) {
 	//binary expression
 	if (expression-> tag == binary_exp) {
 		//recursively parse the left and right expressions.
 		ast* leftExp = expression -> op.binaryExp.left;
-		int leftside = parser(leftExp);
+		int leftside = eval(leftExp);
 		ast* rightExp = expression-> op.binaryExp.right;
-		int rightside = parser(rightExp);
+		int rightside = eval(rightExp);
 		//perform an operation.
 		char* operator = expression->op.binaryExp.operator;
 		if (operator == "+") {
@@ -38,7 +38,7 @@ int parser(ast* expression) {
 	else if (expression->tag == unary_exp) {
 		//recursively parse the child expression.
 		ast* childExp = expression->op.unaryExp.operand;
-		int child = parser(childExp);
+		int child = eval(childExp);
 		//perform an operation.
 		if (expression->op.unaryExp.operator == "-") {
 			return child * -1;
@@ -57,19 +57,93 @@ int parser(ast* expression) {
 	}
 }
 
+ast* make_tree(char* tokens[], int numtokens, int length) {
 
+	if (numtokens == 2) {
+		//shits unary
+	}
+
+	if (numtokens == 3) {
+		//shits binary
+		if (tokens[0] == "*" || tokens[0] == "/" || tokens[0] == "+" || tokens[0] == "-") {
+
+			ast* leftTree;
+			int rightIndex;
+
+			if (tokens[1] == "(") { //youve got a nested tree to evaluate.
+				// leftTree = make_tree(tokens[1], 3); //3 is a dummy number, somehow I need to figure out how many elements the subarray has.
+				printf("nested expression to evaluate\n");
+				char* nest[length-2];
+				int numOpen = 1;
+				int numClosed = 0;
+				int i = 0; //i is the index in the nested list, the index in the regular list is +2
+				while (numOpen > numClosed && i < length-2) { //currently just assuming this will be passed something syntactically correct lol
+					nest[i] = tokens[i+2];
+					printf("%s, ", nest[i]);
+					if (nest[i] == "(") {
+						numOpen += 1;
+					} else if (nest[i] == ")") {
+						numClosed += 1;
+					}
+					i++;
+				}
+				printf("\ncreated the nested list, ready to evaluate.\n");
+				leftTree = make_tree(nest, 3, i);
+				rightIndex = i+3;
+
+			} else if (atoi(tokens[1]) != 0 || tokens[1] == "0") { //First argument is an integer. This is hella unsafe right now, because it doesn't distinguish between error and a value of zero.
+				leftTree = make_integerExp(atoi(tokens[1]));
+				rightIndex = 2;
+				printf("found an integer as left tree\n");
+			} else if (g_hash_table_lookup(hash, tokens[1]) != NULL) {
+				leftTree = make_variableExp(tokens[1]);
+				rightIndex = 2;
+			} else {
+				printf("Not a valid symblol %s", tokens[1]);
+			}
+
+			printf("attempting right tree starting at %s\n", tokens[rightIndex]);
+
+			ast* rightTree;
+			if (tokens[rightIndex] == "(") { 
+				// rightTree = make_tree(tokens[2], 3); 
+				printf("nested expression to evaluate\n");
+
+			} else if (atoi(tokens[rightIndex]) != 0 || tokens[rightIndex] == "0") { 
+				rightTree = make_integerExp(atoi(tokens[rightIndex]));
+				printf("found an integer as right tree\n");
+			} else if (g_hash_table_lookup(hash, tokens[rightIndex]) != NULL) {
+				rightTree = make_variableExp(tokens[rightIndex]);
+			} else {
+				printf("Not a valid symblol %s", tokens[rightIndex]);
+			}
+
+			printf("making the final tree\n");
+			ast* retval = make_binaryExp(tokens[0], leftTree, rightTree);
+			printf("made the tree");
+			return retval;
+		}
+	}
+}
 
 int main() {
+
+	char* tokens[] = {"*", "5", "7"};
+	char* tokens2[] = { "+", "(", "*", "5", "7", ")", "9"}; // ( + ( * 5 7 ) 9 ) = 5*7 + 9
 
 	hash = g_hash_table_new(g_str_hash, g_str_equal); //a hashtable with strings as keys.
 
 	ast* variable = make_variableExp("x");
 	g_hash_table_insert(hash, "x", GINT_TO_POINTER(6));
 
+	ast* tree = make_tree(tokens2, 3, 7);
+	int answer = eval(tree);
+	printf("%i\n", answer);
+
 	//x = 6
 	//(-5+7) * x
 	ast* additionexp = make_binaryExp("*", make_binaryExp("+", make_unaryExp("-", make_integerExp(5)), make_integerExp(7)), variable);
-	int retval = parser(additionexp);
-	printf("%i\n", retval);
+	int retval = eval(additionexp);
+	// printf("%i\n", retval);
 	return 0;
 }
