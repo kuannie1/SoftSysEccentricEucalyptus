@@ -57,9 +57,7 @@ void yyerror(char *msg){
 
 Ast_Node* build_tree(FILE* code){
     yyin = code;
-    do {
-        yyparse();
-    } while (!feof(yyin));
+    yyparse();
     return ast;
 }
 
