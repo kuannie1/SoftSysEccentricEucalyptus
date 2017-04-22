@@ -26,6 +26,8 @@ S : exp             {ast = $1; return 0;} // Print out final value
 exp : NUM                  {$$ = make_ast_node_value($1);}
     | '(' '*' exp exp ')'  {$$ = make_ast_node_function(MULT, $3, $4);}
     | '(' '+' exp exp ')'  {$$ = make_ast_node_function(ADD, $3, $4);}
+    | '(' '-' exp exp ')'  {$$ = make_ast_node_function(SUBTR, $3, $4);}
+    | '(' '/' exp exp ')'  {$$ = make_ast_node_function(DIV, $3, $4);}
     | '(' exp ')'          {$$ = $2;}
     ;
 
