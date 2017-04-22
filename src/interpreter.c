@@ -15,6 +15,8 @@ float eval(Ast_Node* ast){
     switch(ast->func){
         case MULT:  return left_val * right_val;
         case ADD:   return left_val + right_val;
+        case SUBTR: return left_val - right_val;
+        case DIV:   return left_val / right_val;
     }
     perror("why are we here");
     exit(-1);
