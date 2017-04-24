@@ -25,11 +25,11 @@ int eval(ast* expression) {
 			return rightside + leftside;
 		}
 		else if (operator == "-") {
-			return rightside - leftside;
+			return leftside - rightside;
 		} else if (operator == "*") {
 			return rightside * leftside;
 		} else if (operator == "/") {
-			return rightside / leftside;
+			return leftside / rightside;
 		} else {
 			printf("You entered binary operator %s. This isnt supported yet.", operator);
 		}
@@ -152,7 +152,7 @@ int main() {
 
 	char* tokens[] = {"*", "5", "7"};
 	char* tokens2[] = { "+", "(", "*", "5", "7", ")", "9"}; // ( + ( * 5 7 ) 9 ) = 5*7 + 9 = 44
-	char* tokens3[] = {"+", "(", "*", "5", "(", "+", "6", "3", ")", ")", "9"}; //(+ ( * 5 ( + 6 3 ) ) 9 ) = 5*(6+3) + 9 = 54
+	char* tokens3[] = {"+", "(", "*", "5", "(", "/", "6", "3", ")", ")", "9"}; //(+ ( * 5 ( / 6 3 ) ) 9 ) = 5*(6/3) + 9 = 19
 
 	hash = g_hash_table_new(g_str_hash, g_str_equal); //a hashtable with strings as keys.
 
