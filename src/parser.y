@@ -64,7 +64,7 @@ Ast_Node* build_tree(FILE* code){
 }
 
 // int main() {
-//     printf("%i\n", yyparse());
-//     printf("%i\n", ast->func);
-//     return 0;
+//      printf("%i\n", yyparse());
+//      printf("%i\n", ast->func);
+//      return 0;
 // }
