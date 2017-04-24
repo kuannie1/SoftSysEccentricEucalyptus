@@ -1,6 +1,12 @@
 
 # Created by https://www.gitignore.io/api/c,c++,vim,sublimetext
 
+src/interpreter
+src/parser
+src/lex.yy.c
+src/y.tab.c
+src/y.tab.h
+
 ### C ###
 # Prerequisites
 *.d
