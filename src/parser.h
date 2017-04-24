@@ -6,6 +6,8 @@
 typedef enum function{
     ADD,
     MULT,
+    SUBTR,
+    DIV,
     FLT
 } Function;
 
