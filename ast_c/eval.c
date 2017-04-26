@@ -59,53 +59,102 @@ int eval(ast* expression) {
 
 ast* make_tree(char* tokens[], int numtokens, int length) {
 
-	if (numtokens == 2) {
-		//shits unary
+	//case: integer
+	if (atoi(tokens[0]) != 0 || tokens[0] == "0") { 
+		return make_integerExp(atoi(tokens[0]));
+	} 
+	//case: variable
+	else if (g_hash_table_lookup(hash, tokens[0]) != NULL) {
+		return make_variableExp(tokens[0]);
 	}
+	//case: variable definition
+	else if (tokens[0] == "let") {
+		printf("\n making a variable\n");
 
-	if (numtokens == 3) {
-		//shits binary
-		if (tokens[0] == "*" || tokens[0] == "/" || tokens[0] == "+" || tokens[0] == "-") {
+		char* varName = tokens[2];
 
-			ast* leftTree;
-			int rightIndex;
+		ast* leftTree;
 
-			if (tokens[1] == "(") { //youve got a nested tree to evaluate.
+		if (tokens[3] == "(") {
+			char* nest[length-2];
+			int numOpen = 1;
+			int numClosed = 0;
+			int i = 0; 
 
-				printf("nested expression to evaluate\n");
-				char* nest[length-2];
-				int numOpen = 1;
-				int numClosed = 0;
-				int i = 0; //i is the index in the nested list, the index in the regular list is +2
-				while (numOpen > numClosed && i < length-2) { //currently just assuming this will be passed something syntactically correct lol
-					nest[i] = tokens[i+2];
-					printf("%s, ", nest[i]);
-					if (nest[i] == "(") {
-						numOpen += 1;
-					} else if (nest[i] == ")") {
-						numClosed += 1;
-					}
-					i++;
+			while (numOpen > numClosed && i < length-3) { 
+				nest[i] = tokens[i+4];
+				printf("%s, ", nest[i]);
+				if (nest[i] == "(") {
+					numOpen += 1;
+				} else if (nest[i] == ")") {
+					numClosed += 1;
 				}
-
-				printf("\n----------\n");
-				leftTree = make_tree(nest, 3, i);
-				printf("\n----------\n");
-				printf("created left tree.\n");
-				rightIndex = i+2;
-
-			} else if (atoi(tokens[1]) != 0 || tokens[1] == "0") { //First argument is an integer. This is hella unsafe right now, because it doesn't distinguish between error and a value of zero.
-				leftTree = make_integerExp(atoi(tokens[1]));
-				rightIndex = 2;
-				printf("found an integer as left tree\n");
-			} else if (g_hash_table_lookup(hash, tokens[1]) != NULL) {
-				leftTree = make_variableExp(tokens[1]);
-				rightIndex = 2;
-			} else {
-				printf("Not a valid symblol %s", tokens[1]);
+				i++;
 			}
 
-			printf("attempting right tree starting at %i\n", rightIndex);
+			printf("\n----------\n");
+			leftTree = make_tree(nest, 3, i);
+			printf("\n----------\n");
+		}
+
+		else {
+			char* nest[] = {tokens[3]};
+			leftTree = make_tree(nest, 3, 1);
+		}
+
+		int varValue = eval(leftTree);
+		printf("value: %i", varValue);
+
+		g_hash_table_insert(hash, varName, GINT_TO_POINTER(varValue));
+		ast* var = make_variableExp(varName);
+
+		return var;
+
+	}
+	//case: operation
+	if (tokens[0] == "*" || tokens[0] == "/" || tokens[0] == "+" || tokens[0] == "-") {
+
+		ast* leftTree;
+		int rightIndex;
+
+		if (tokens[1] == "(") { //youve got a nested tree to evaluate.
+
+			printf("nested expression to evaluate\n");
+			char* nest[length-2];
+			int numOpen = 1;
+			int numClosed = 0;
+			int i = 0; //i is the index in the nested list, the index in the regular list is +2
+			while (numOpen > numClosed && i < length-2) { //currently just assuming this will be passed something syntactically correct lol
+				nest[i] = tokens[i+2];
+				printf("%s, ", nest[i]);
+				if (nest[i] == "(") {
+					numOpen += 1;
+				} else if (nest[i] == ")") {
+					numClosed += 1;
+				}
+				i++;
+			}
+
+			printf("\n----------\n");
+			leftTree = make_tree(nest, 3, i);
+			printf("\n----------\n");
+			printf("created left tree.\n");
+			rightIndex = i+2;
+
+		} else if (atoi(tokens[1]) != 0 || tokens[1] == "0") { //First argument is an integer. This is hella unsafe right now, because it doesn't distinguish between error and a value of zero.
+			leftTree = make_integerExp(atoi(tokens[1]));
+			rightIndex = 2;
+			printf("found an integer as left tree\n");
+		} else if (g_hash_table_lookup(hash, tokens[1]) != NULL) {
+			leftTree = make_variableExp(tokens[1]);
+			rightIndex = 2;
+		} else {
+			printf("Not a valid symbol %s", tokens[1]);
+		}
+
+		//shit's binary
+		if (tokens[rightIndex] != ")") {
+			printf("binary expression. attempting right tree starting at %i\n", rightIndex);
 
 			ast* rightTree;
 			if (tokens[rightIndex] == "(") { 
@@ -145,23 +194,35 @@ ast* make_tree(char* tokens[], int numtokens, int length) {
 			printf("made the tree\n");
 			return retval;
 		}
+
+		//shit's unary
+		else {
+			printf("Found a unary expression");
+			ast* retval = make_unaryExp(tokens[0], leftTree);
+			return retval;
+		}
 	}
 }
 
 int main() {
 
 	char* tokens[] = {"*", "5", "7"};
-	char* tokens2[] = { "+", "(", "*", "5", "7", ")", "9"}; // ( + ( * 5 7 ) 9 ) = 5*7 + 9 = 44
-	char* tokens3[] = {"+", "(", "*", "5", "(", "/", "6", "3", ")", ")", "9"}; //(+ ( * 5 ( / 6 3 ) ) 9 ) = 5*(6/3) + 9 = 19
+	char* tokens2[] = { "+", "(", "*", "5", "x", ")", "9"}; // ( + ( * 5 x ) 9 ) = 5*10 + 9 = 44
+	char* tokens3[] = {"+", "(", "*", "5", "(", "/", "6", "3", ")", ")", "9"}; //(+ ( * 5 ( / 6 3 ) ) 9 ) = 5*(-6) + 9 = 19
+	char* tokens4[] = {"let", "(", "x", "(", "+", "7", "10", ")"};
+	char* tokens5[] = {"let", "(", "x", "10", ")"};
 
 	hash = g_hash_table_new(g_str_hash, g_str_equal); //a hashtable with strings as keys.
 
 	ast* variable = make_variableExp("x");
 	g_hash_table_insert(hash, "x", GINT_TO_POINTER(6));
 
-	ast* tree = make_tree(tokens3, 3, 11);
+	ast* tree1 = make_tree(tokens5, 3, 5);
+	printf("\nfinished!\n");
 
-	int answer = eval(tree);
+	ast* tree2 = make_tree(tokens2, 3, 7);
+
+	int answer = eval(tree2);
 	printf("%i\n", answer);
 
 	//x = 6
