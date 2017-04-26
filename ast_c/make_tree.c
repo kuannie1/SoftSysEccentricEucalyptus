@@ -1,63 +1,3 @@
-/*
-Evaluates an abstract syntax tree in C, using the ast struct by Leonidas Farigas. 
-Currently supports: addition, subtraction, multiplication, divition, negative numbers, integer variables.
-By Margo Crawford.
-
-*/
-#include <stdlib.h>
-#include <stdio.h>
-#include <glib.h>
-#include "ast.h"
-#include "eval.h"
-
-GHashTable* hash; 
-
-int eval(ast* expression) {
-	//binary expression
-	if (expression-> tag == binary_exp) {
-		//recursively parse the left and right expressions.
-		ast* leftExp = expression -> op.binaryExp.left;
-		int leftside = eval(leftExp);
-		ast* rightExp = expression-> op.binaryExp.right;
-		int rightside = eval(rightExp);
-		//perform an operation.
-		char* operator = expression->op.binaryExp.operator;
-		if (operator == "+") {
-			return rightside + leftside;
-		}
-		else if (operator == "-") {
-			return leftside - rightside;
-		} else if (operator == "*") {
-			return rightside * leftside;
-		} else if (operator == "/") {
-			return leftside / rightside;
-		} else {
-			printf("You entered binary operator %s. This isnt supported yet.", operator);
-		}
-	}
-	//unary expression
-	else if (expression->tag == unary_exp) {
-		//recursively parse the child expression.
-		ast* childExp = expression->op.unaryExp.operand;
-		int child = eval(childExp);
-		//perform an operation.
-		if (expression->op.unaryExp.operator == "-") {
-			return child * -1;
-		}
-	}
-	//integer.
-	else if (expression->tag == integer_exp) {
-		return expression->op.integerExp;
-	}
-	//variable
-	else if (expression->tag == variable_exp ) {
-		gpointer* val = g_hash_table_lookup(hash, expression->op.variableExp);
-		if (val != NULL) {
-			return GPOINTER_TO_INT(val);
-		}
-	}
-}
-
 ast* make_tree(char* tokens[], int numtokens, int length) {
 
 	//case: integer
@@ -199,24 +139,4 @@ ast* make_tree(char* tokens[], int numtokens, int length) {
 		printf("Not a valid symbol %s", tokens[0]);
 		return NULL;
 	}
-}
-
-int main() {
-
-	char* tokens[] = {"*", "5", "7"};
-	char* tokens2[] = { "+", "(", "*", "5", "x", ")", "9"}; // ( + ( * 5 x ) 9 ) = 5*10 + 9 = 44
-	char* tokens3[] = {"+", "(", "*", "5", "(", "/", "6", "3", ")", ")", "9"}; //(+ ( * 5 ( / 6 3 ) ) 9 ) = 5*(-6) + 9 = 19
-	char* tokens4[] = {"let", "(", "x", "(", "+", "7", "10", ")"};
-	char* tokens5[] = {"let", "(", "x", "10", ")"};
-
-	hash = g_hash_table_new(g_str_hash, g_str_equal); // a hashtable with strings as keys.
-
-	ast* tree1 = make_tree(tokens5, 3, 5);
-
-	ast* tree2 = make_tree(tokens2, 3, 7);
-
-	int answer = eval(tree2);
-	printf("%i\n", answer);
-
-	return 0;
 }
