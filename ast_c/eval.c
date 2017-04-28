@@ -45,7 +45,7 @@ int eval(ast* expression, GHashTable* vars) {
 			return child * -1;
 		}
 	}
-	//integer.
+	//integer
 	else if (expression->tag == integer_exp) {
 		return expression->op.integerExp;
 	}
@@ -55,5 +55,10 @@ int eval(ast* expression, GHashTable* vars) {
 		if (val != NULL) {
 			return GPOINTER_TO_INT(val);
 		}
+	}
+
+	//function
+	else if ( expression->tag == function_exp ) {
+		return eval(expression->op.functionExp.func, vars);
 	}
 }
