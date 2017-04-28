@@ -1,7 +1,4 @@
-y.tab.c: parser.y parser.h
-	yacc -d parser.y
-
-y.tab.h: parser.y parser.h
+y.tab.c y.tab.h: parser.y parser.h
 	yacc -d parser.y
 
 lex.yy.c: lexer.l
@@ -11,7 +8,8 @@ lex.yy.c: lexer.l
 # parser: parser.y parser.h lex.yy.c y.tab.h y.tab.c
 # 	cc lex.yy.c y.tab.c y.tab.h -o parser
 
-interpreter: interpreter.c parser.h
-	make y.tab.c
-	make lex.yy.c
+interpreter: interpreter.c parser.h y.tab.c lex.yy.c y.tab.h
 	gcc -Wall interpreter.c lex.yy.c y.tab.c -o interpreter
+	rm y.tab.c
+	rm lex.yy.c
+	rm y.tab.h

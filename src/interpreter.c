@@ -1,7 +1,28 @@
+/* Interpreter.c
+ *
+ * Interpreter.c is a lisp interpreter capable of basic calculations,
+ * function declarations, and variable usage.
+ *
+ * Software Systems Spring 2017 - Olin College
+ * Eccentric Eucalyptus
+ *
+ * Usage:
+ *  make interpreter
+ *  ./interpreter test.lisp
+ */
+
 #include "parser.h"
 #include <stdio.h>
 #include <stdlib.h>
 
+/* eval recursively evaluates an abstract syntax tree
+ *
+ * Args:
+ *  ast: pointer to the head Ast_Node
+ *
+ * Returns:
+ *  flt: final value of evaluation
+ */
 float eval(Ast_Node* ast){
     // return value
     if(ast->func == FLT){
@@ -17,11 +38,18 @@ float eval(Ast_Node* ast){
         case ADD:   return left_val + right_val;
         case SUBTR: return left_val - right_val;
         case DIV:   return left_val / right_val;
+        default:
+            perror("why are we here");
+            exit(-1);
     }
-    perror("why are we here");
-    exit(-1);
 }
 
+/* make_test_tree makes and returns an abstract syntax tree
+ * for testing purposes
+ *
+ * Returns:
+ *  ast: pointer to the head Ast_Node
+ */
 Ast_Node* make_test_tree(){
     Ast_Node* ast = malloc(sizeof(Ast_Node));
     ast->func = ADD;
