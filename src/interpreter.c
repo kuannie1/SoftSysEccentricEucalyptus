@@ -1,3 +1,14 @@
+/* Interpreter.c is a lisp interpreter capable of basic calculations,
+ * function declarations, and variable usage.
+ *
+ * Software Systems Spring 2017 - Olin College
+ * Eccentric Eucalyptus
+ *
+ * Usage:
+ *  make interpreter
+ *  ./interpreter test.lisp
+ */
+
 #include "parser.h"
 #include <stdio.h>
 #include <stdlib.h>
