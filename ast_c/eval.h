@@ -1,1 +1,1 @@
-int eval(ast* expression);
+int eval(ast* expression, GHashTable* hash);
