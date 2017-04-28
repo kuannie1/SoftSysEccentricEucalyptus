@@ -1,3 +1,14 @@
+/* Parser.y
+ *
+ * Parser.y contains the code and gramatical rules
+ * that will build the abstract syntax tree used by our
+ * interpreter.
+ *
+ * Software Systems Spring 2017 - Olin College
+ * Eccentric Eucalyptus
+ *
+ */
+
 %{
 #include <stdio.h>
 #include <stdlib.h>
@@ -67,7 +78,7 @@ void yyerror(char *msg){
     exit(1);
 }
 
-/*
+/* build_tree
  *
  *
  *

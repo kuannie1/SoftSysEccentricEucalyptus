@@ -1,4 +1,6 @@
-/* Interpreter.c is a lisp interpreter capable of basic calculations,
+/* Interpreter.c
+ *
+ * Interpreter.c is a lisp interpreter capable of basic calculations,
  * function declarations, and variable usage.
  *
  * Software Systems Spring 2017 - Olin College

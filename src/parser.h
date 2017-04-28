@@ -1,3 +1,13 @@
+/* Parser.h
+ *
+ * Parser.h is a header file that declares and defines the enums,
+ * functions, unions, and structs that will be used in Parser.y
+ *
+ * Software Systems Spring 2017 - Olin College
+ * Eccentric Eucalyptus
+ *
+ */
+
 #ifndef parser_h
 #define parser_h
 
@@ -25,7 +35,7 @@ typedef union ast_val{
  *  func: enum Function type
  *  left: pointer to an ast_node
  *  right: pointer to an ast_node
- *  value: numerical union 
+ *  value: numerical union
  */
 typedef struct ast_node{
     Function func;
