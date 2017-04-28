@@ -71,3 +71,15 @@ ast* make_recordExp( char* attribute, ast* value, struct rec* next ) {
 	e->op.recordExp.next = next;
 	return e;
 }
+
+ast* make_functionExp( char* name, ast* func, int num_arguments, char* arguments[] ) {
+	ast* e = malloc(sizeof(ast) + num_arguments*sizeof(char*));
+	e->tag = function_exp;
+	e->op.functionExp.name = name;
+	e->op.functionExp.func = func;
+	e->op.functionExp.num_arguments = num_arguments;
+	for (int i = 0; i < num_arguments; i++) {
+		e->op.functionExp.arguments[i] = arguments[i];
+	}
+	return e;
+}
