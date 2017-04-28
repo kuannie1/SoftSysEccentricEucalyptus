@@ -17,9 +17,10 @@ float eval(Ast_Node* ast){
         case ADD:   return left_val + right_val;
         case SUBTR: return left_val - right_val;
         case DIV:   return left_val / right_val;
+        default:
+            perror("why are we here");
+            exit(-1);
     }
-    perror("why are we here");
-    exit(-1);
 }
 
 Ast_Node* make_test_tree(){
