@@ -20,7 +20,7 @@ struct ast_node* ast;
 
 %%
 
-S : exp             {ast = $1; return 0;} 
+S : exp             {ast = $1; return 0;}
   ;
 
 exp : NUM                  {$$ = make_ast_node_value($1);}
@@ -33,6 +33,11 @@ exp : NUM                  {$$ = make_ast_node_value($1);}
 
 %%
 
+/*
+ *
+ *
+ *
+ */
 Ast_Node* make_ast_node_function(Function func, Ast_Node* left, Ast_Node* right){
     Ast_Node* node = malloc(sizeof(Ast_Node));
     node->func = func;
@@ -42,6 +47,11 @@ Ast_Node* make_ast_node_function(Function func, Ast_Node* left, Ast_Node* right)
     return node;
 }
 
+/*
+ *
+ *
+ *
+ */
 Ast_Node* make_ast_node_value(float value){
     Ast_Node* node = malloc(sizeof(Ast_Node));
     node->func = FLT; // values are always floats
@@ -57,6 +67,11 @@ void yyerror(char *msg){
     exit(1);
 }
 
+/*
+ *
+ *
+ *
+ */
 Ast_Node* build_tree(FILE* code){
     yyin = code;
     yyparse();

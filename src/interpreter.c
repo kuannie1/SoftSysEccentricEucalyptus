@@ -2,6 +2,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+/* Recursively evaluates an abstract syntax tree
+ *
+ * ast: pointer to the head Ast_Node
+ *
+ * Returns:
+ *  flt: final value of evaluation
+ */
 float eval(Ast_Node* ast){
     // return value
     if(ast->func == FLT){
@@ -23,6 +30,11 @@ float eval(Ast_Node* ast){
     }
 }
 
+/* Test function that makes and returns an abstract syntax tree
+ *
+ * Returns:
+ *  ast: pointer to the head Ast_Node
+ */
 Ast_Node* make_test_tree(){
     Ast_Node* ast = malloc(sizeof(Ast_Node));
     ast->func = ADD;
