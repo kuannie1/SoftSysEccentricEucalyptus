@@ -54,14 +54,14 @@ exp : NUM                                           {$$ = make_ast_node_value((v
  * a calculator like function such as additon, or multiplication.
  *
  * Args:
- *  func: enum Function
+ *  func: enum Type
  *  left: pointer to an ast_node
  *  right: pointer to an ast_node
  *
  * Returns:
  *  node: pointer to the newly created ast_node
  */
-Ast_Node* make_ast_node_function(Function func, Ast_Node* left, Ast_Node* right){
+Ast_Node* make_ast_node_function(Type func, Ast_Node* left, Ast_Node* right){
     Ast_Node* node = malloc(sizeof(Ast_Node));
     node->func = func;
     node->left = left;
@@ -79,7 +79,7 @@ Ast_Node* make_ast_node_function(Function func, Ast_Node* left, Ast_Node* right)
  * Returns:
  *  node: pointer to the newly created ast_node
  */
-Ast_Node* make_ast_node_value(void* value, Function func){
+Ast_Node* make_ast_node_value(void* value, Type func){
     Ast_Node* node = malloc(sizeof(Ast_Node));
     node->func = func; 
     if (func == FLT) {
