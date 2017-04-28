@@ -78,10 +78,13 @@ void yyerror(char *msg){
     exit(1);
 }
 
-/* build_tree
+/* build_tree builds an abstract syntax tree given stdin data flow
  *
+ * Args:
+ *  code: a file descriptor - stdin for our usage
  *
- *
+ * Returns:
+ *  ast: pointer to the head Ast_Node
  */
 Ast_Node* build_tree(FILE* code){
     yyin = code;

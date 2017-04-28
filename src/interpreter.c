@@ -15,9 +15,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-/* Recursively evaluates an abstract syntax tree
+/* eval recursively evaluates an abstract syntax tree
  *
- * ast: pointer to the head Ast_Node
+ * Args:
+ *  ast: pointer to the head Ast_Node
  *
  * Returns:
  *  flt: final value of evaluation
@@ -43,7 +44,8 @@ float eval(Ast_Node* ast){
     }
 }
 
-/* Test function that makes and returns an abstract syntax tree
+/* make_test_tree makes and returns an abstract syntax tree
+ * for testing purposes
  *
  * Returns:
  *  ast: pointer to the head Ast_Node
