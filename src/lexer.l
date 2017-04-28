@@ -8,8 +8,10 @@
 
 %%
 
+let 							{yylval.keyword = yytext; return LET_KW;}
 [0-9]+(\.[0-9]+)?([eE][0-9]+)?  {yylval.f = atof(yytext); return NUM;}
-[+()*-/]                        {return yytext[0];}
+[+()*-/]                        {return yytext[0];} 
 [ \t\f\v\n]                     { ; }
+[A-Za-z][A-Za-z0-9_]*			{yylval.name = yytext; return VNAME;} 
 
 %%

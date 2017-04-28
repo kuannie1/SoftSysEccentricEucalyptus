@@ -19,12 +19,10 @@ typedef enum function{
     SUBTR,
     DIV,
     FLT,
+    LET,
+    VARNAME,
     LAMBDA
 } Function;
-
-typedef union ast_val{
-    float flt;
-}AstVal;
 
 /* ast_node struct serves as the building block of our abstract
  * syntax tree.
@@ -38,11 +36,18 @@ typedef union ast_val{
 typedef struct ast_node{
     Function func;
     struct ast_node *left, *right;
-    AstVal *value;
+    union {
+        float val_flt;
+        struct ast_node* val_exp;
+        char* val_name;
+    };
+    char* name;
+    struct ast_node *next;
 }Ast_Node;
 
 Ast_Node* make_ast_node_function(Function func, Ast_Node* left, Ast_Node* right);
-Ast_Node* make_ast_node_value(float value);
+Ast_Node* make_ast_node_value(void* value, Function func);
+Ast_Node* make_ast_node_variable(char* vname, Ast_Node* var_value, Ast_Node* exp);
 Ast_Node* build_tree(FILE* code);
 
 #endif
