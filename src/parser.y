@@ -20,7 +20,7 @@ struct ast_node* ast;
 
 %%
 
-S : exp             {ast = $1; return 0;} // Print out final value
+S : exp             {ast = $1; return 0;} 
   ;
 
 exp : NUM                  {$$ = make_ast_node_value($1);}

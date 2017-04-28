@@ -8,7 +8,8 @@ typedef enum function{
     MULT,
     SUBTR,
     DIV,
-    FLT
+    FLT,
+    LAMBDA
 } Function;
 
 typedef union ast_val{
