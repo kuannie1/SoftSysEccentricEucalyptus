@@ -23,7 +23,7 @@ Node* make_node(char* key, ast* function, Node* next) {
 	node->next = next;
 }
 
-ast* make_tree(char* tokens[], int numtokens, int length) {
+ast* make_tree(char* tokens[], int length) {
 
 	//case: integer
 	if (atoi(tokens[0]) != 0 || tokens[0] == "0") { 
@@ -34,7 +34,7 @@ ast* make_tree(char* tokens[], int numtokens, int length) {
 		return make_variableExp(tokens[0]);
 	}
 	//case: variable definition
-	else if (tokens[0] == "let") {
+	else if (tokens[0] == "defvar") {
 		printf("\n making a variable\n");
 
 		char* varName = tokens[2];
@@ -59,13 +59,13 @@ ast* make_tree(char* tokens[], int numtokens, int length) {
 			}
 
 			printf("\n----------\n");
-			leftTree = make_tree(nest, 3, i);
+			leftTree = make_tree(nest, i);
 			printf("\n----------\n");
 		}
 
 		else {
 			char* nest[] = {tokens[3]};
-			leftTree = make_tree(nest, 3, 1);
+			leftTree = make_tree(nest, 1);
 		}
 
 		int varValue = eval(leftTree, hash);
@@ -83,20 +83,38 @@ ast* make_tree(char* tokens[], int numtokens, int length) {
 		//I don't know how to do an arbitrary number of arguments. I'm just doing two for now.
 		printf("creating function. \n");
 		char* func_name = tokens[1];
-		char* arg1 = tokens[3];
-		char* arg2 = tokens[4];
-		char* arguments[] = {arg1, arg2};
 
-		printf("function name: %s. arguments: %s, %s.\n", func_name, arg1, arg2);
+		//extract variable names starting at tokens[3]
+		char* arguments[length - 3];
 
-		//jank ass way of dealing with things. Everything is in the same variable space. 
-		g_hash_table_insert(hash, arg1, GINT_TO_POINTER(1));
-		g_hash_table_insert(hash, arg2, GINT_TO_POINTER(1));
-
-		char* nest[length-5];
 		int numOpen = 1;
 		int numClosed = 0;
 		int i = 0;
+		while (numOpen > numClosed) {
+			arguments[i] = tokens[i+3];
+			if (arguments[i] == "(") {
+				numOpen += 1;
+			} else if (arguments[i] == ")") {
+				numClosed += 1;
+			}
+			i++;
+		}
+
+		int num_arguments = i-1;
+
+		printf("function name: %s. arguments: ", func_name );
+
+		for (int j = 0; j < i-1; j++ ) {
+			char* arg = arguments[j];
+			g_hash_table_insert(hash, arg, GINT_TO_POINTER(1));
+			printf("%s, ", arg);
+		}
+
+		printf("\n");
+		char* nest[length-5];
+		numOpen = 1;
+		numClosed = 0;
+		i = 0;
 		while (numOpen > numClosed && i < length - 6) {
 			nest[i] = tokens[i+7];
 			printf("%s, ", nest[i]);
@@ -109,10 +127,10 @@ ast* make_tree(char* tokens[], int numtokens, int length) {
 		}
 
 		printf("\n----------\n");
-		ast* subtree = make_tree(nest, 3, i);
+		ast* subtree = make_tree(nest, i);
 		printf("\n----------\n");
 
-		ast* tree = make_functionExp(func_name, subtree, 2, arguments);
+		ast* tree = make_functionExp(func_name, subtree, num_arguments, arguments);
 
 		Node* node = make_node(func_name, tree, NULL);
 		if (head == NULL) {
@@ -153,7 +171,7 @@ ast* make_tree(char* tokens[], int numtokens, int length) {
 			}
 
 			printf("\n----------\n");
-			leftTree = make_tree(nest, 3, i);
+			leftTree = make_tree(nest, i);
 			printf("\n----------\n");
 			printf("created left tree.\n");
 			rightIndex = i+2;
@@ -161,7 +179,7 @@ ast* make_tree(char* tokens[], int numtokens, int length) {
 		//non-nested case
 		else {
 			char* nest[] = {tokens[1]};
-			leftTree = make_tree(nest, 3, 1);
+			leftTree = make_tree(nest, 1);
 			rightIndex = 2;
 		}
 
@@ -189,13 +207,13 @@ ast* make_tree(char* tokens[], int numtokens, int length) {
 				}
 
 				printf("\n----------\n");
-				rightTree = make_tree(nest, 3, i);
+				rightTree = make_tree(nest, i);
 				printf("\n----------\n");
 				printf("created right tree. \n");
 
 			} else {
 				char* nest[] = {tokens[rightIndex]};
-				rightTree = make_tree(nest, 3, 1);
+				rightTree = make_tree(nest, 1);
 			}
 
 			ast* retval = make_binaryExp(tokens[0], leftTree, rightTree);
@@ -240,22 +258,21 @@ int main() {
 
 	char* functiontTokens[] = {"defun", "myfun", "(", "y", "z", ")", "(", "+", "y", "z", ")"};
 	char* evalFunctionTokens[] = {"myfun", "5", "7"};
-	ast* first_func = make_tree(functiontTokens, 3, 11);
-	ast* eval_func = make_tree(evalFunctionTokens, 3, 3);
+	ast* first_func = make_tree(functiontTokens, 11);
+	ast* eval_func = make_tree(evalFunctionTokens, 3);
 	int val = eval(eval_func, hash);
 
 	printf("%i\n", val);
 
-
 	char* tokens[] = {"*", "5", "7"};
 	char* tokens2[] = { "+", "(", "*", "5", "x", ")", "9"}; // ( + ( * 5 x ) 9 ) = 5*10 + 9 = 59
 	char* tokens3[] = {"+", "(", "*", "5", "(", "/", "6", "3", ")", ")", "9"}; //(+ ( * 5 ( / 6 3 ) ) 9 ) = 5*(-6) + 9 = 19
-	char* tokens4[] = {"let", "(", "x", "(", "+", "7", "10", ")"};
-	char* tokens5[] = {"let", "(", "x", "10", ")"};
+	char* tokens4[] = {"defvar", "(", "x", "(", "+", "7", "10", ")"};
+	char* tokens5[] = {"defvar", "(", "x", "10", ")"};
 
-	ast* tree1 = make_tree(tokens5, 3, 5);
+	ast* tree1 = make_tree(tokens5, 5);
 
-	ast* tree2 = make_tree(tokens2, 3, 7);
+	ast* tree2 = make_tree(tokens2, 7);
 
 	int answer = eval(tree2, hash);
 
