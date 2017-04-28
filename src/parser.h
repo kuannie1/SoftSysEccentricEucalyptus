@@ -26,10 +26,8 @@ typedef union ast_val{
     float flt;
 }AstVal;
 
-/* The ast_node struct
- *
- * This struct serves as the building block of our abstract
- * syntax trees.
+/* ast_node struct serves as the building block of our abstract
+ * syntax tree.
  *
  * Members:
  *  func: enum Function type
