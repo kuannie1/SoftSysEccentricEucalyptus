@@ -13,6 +13,9 @@ By Margo Crawford.
 
 
 int eval(ast* expression, GHashTable* vars) {
+	if (expression == NULL) {
+		return -1;
+	}
 	//binary expression
 	if (expression-> tag == binary_exp) {
 		//recursively parse the left and right expressions.
