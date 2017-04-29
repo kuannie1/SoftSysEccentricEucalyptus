@@ -41,6 +41,8 @@ float eval(Ast_Node* ast, ParamNode** vars){
         char* variable_name = ast->val_name;
         ParamNode *current = *vars;
         while (current != NULL){
+            puts(current->param_name);
+            puts(variable_name);
             if (strcmp(current->param_name, variable_name) == 0) {
                 return current->val_flt;
             }
@@ -75,7 +77,7 @@ int main(int argc, char** argv){
     FILE *file = fopen(filename, "r");
     Ast_Node* ast = build_tree(file);
 
-    float expression = eval(ast, NULL);
+    float expression = eval(ast, malloc(sizeof(ParamNode*)));
     printf("%f\n", expression);
 
     return 0;
