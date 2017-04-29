@@ -108,12 +108,11 @@ Ast_Node* make_ast_node_value(void* value, Type func){
 Ast_Node* make_ast_node_variable(char* vname, Ast_Node* var_value, Ast_Node* exp){
     Ast_Node* node = malloc(sizeof(Ast_Node));
     node->func = LET; 
-    // node->value = malloc(sizeof(AstVal));
-    // node->value->exp = var_value;
     node->val_exp = var_value;
     node->left = NULL; // values don't have progeny
     node->right = NULL;
     node->next = exp;
+    node->name = vname;
     return node;
 }
 
@@ -136,8 +135,8 @@ Ast_Node* build_tree(FILE* code){
     return ast;
 }
 
-int main() {
-     printf("%i\n", yyparse());
-     printf("%i\n", ast->func);
-     return 0;
-}
+// int main() {
+//      printf("%i\n", yyparse());
+//      printf("%i\n", ast->func);
+//      return 0;
+// }
