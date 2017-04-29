@@ -66,7 +66,7 @@ char* pop_param(ParamNode **list) {
  * val: value to add
  */
 void push_param_float(ParamNode **list, char* name, float val) {
-    ParamNode *newElement = make_node_float(name, val, *list);
+    ParamNode *newElement = make_param_node_float(name, val, *list);
     *list = newElement; //the list points to this new element node
 }
 
