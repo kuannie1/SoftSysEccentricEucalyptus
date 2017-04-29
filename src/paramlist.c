@@ -54,7 +54,7 @@ char* pop_param(ParamNode **list) {
 
     char* headVal = current -> param_name;
 
-    **list = *(current->next);
+    *list = current->next;
 
     return headVal;
 }

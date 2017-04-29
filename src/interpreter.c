@@ -41,8 +41,6 @@ float eval(Ast_Node* ast, ParamNode** vars){
         char* variable_name = ast->val_name;
         ParamNode *current = *vars;
         while (current != NULL){
-            puts(current->param_name);
-            puts(variable_name);
             if (strcmp(current->param_name, variable_name) == 0) {
                 return current->val_flt;
             }
