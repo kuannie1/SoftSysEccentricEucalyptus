@@ -1,0 +1,5 @@
+( defun func2 ( a b c ) ( + a b ) )
+( func2 5 7 9 )
+( * 5 7 )
+( defvar ( x ( + 7 10 ) ) )
+( * 2 x )

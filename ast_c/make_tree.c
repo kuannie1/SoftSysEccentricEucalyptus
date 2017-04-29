@@ -26,7 +26,7 @@ Node* make_node(char* key, ast* function, Node* next) {
 ast* make_tree(char* tokens[], int length) {
 
 	//case: integer
-	if (atoi(tokens[0]) != 0 || tokens[0] == "0") { 
+	if (atoi(tokens[0]) != 0 || strcmp(tokens[0], "0") == 0 ) {
 		return make_integerExp(atoi(tokens[0]));
 	} 
 	//case: variable
@@ -34,14 +34,14 @@ ast* make_tree(char* tokens[], int length) {
 		return make_variableExp(tokens[0]);
 	}
 	//case: variable definition
-	else if (tokens[0] == "defvar") {
+	else if (strcmp(tokens[0],"defvar") == 0 ) {
 		printf("\n making a variable\n");
 
 		char* varName = tokens[2];
 
 		ast* leftTree;
 
-		if (tokens[3] == "(") {
+		if (strcmp(tokens[3], "(") == 0 ) {
 			char* nest[length-2];
 			int numOpen = 1;
 			int numClosed = 0;
@@ -50,9 +50,9 @@ ast* make_tree(char* tokens[], int length) {
 			while (numOpen > numClosed && i < length-3) { 
 				nest[i] = tokens[i+4];
 				printf("%s, ", nest[i]);
-				if (nest[i] == "(") {
+				if ( strcmp(nest[i], "(") == 0 ) {
 					numOpen += 1;
-				} else if (nest[i] == ")") {
+				} else if (strcmp(nest[i], ")") == 0 ) {
 					numClosed += 1;
 				}
 				i++;
@@ -79,7 +79,7 @@ ast* make_tree(char* tokens[], int length) {
 	}
 
 	//function definition
-	else if (tokens[0] == "defun") {
+	else if (strcmp(tokens[0],"defun") == 0 ) {
 		//I don't know how to do an arbitrary number of arguments. I'm just doing two for now.
 		printf("creating function. \n");
 		char* func_name = tokens[1];
@@ -92,9 +92,9 @@ ast* make_tree(char* tokens[], int length) {
 		int i = 0;
 		while (numOpen > numClosed) {
 			arguments[i] = tokens[i+3];
-			if (arguments[i] == "(") {
+			if ( strcmp(arguments[i], "(") == 0 ) {
 				numOpen += 1;
-			} else if (arguments[i] == ")") {
+			} else if (strcmp(arguments[i], ")") == 0 ) {
 				numClosed += 1;
 			}
 			i++;
@@ -110,17 +110,17 @@ ast* make_tree(char* tokens[], int length) {
 			printf("%s, ", arg);
 		}
 
-		printf("\n");
+		printf(" ( %i arguments total ).\nfunction body: ", num_arguments);
 		char* nest[length-5];
 		numOpen = 1;
 		numClosed = 0;
 		i = 0;
 		while (numOpen > numClosed && i < length - 6) {
-			nest[i] = tokens[i+7];
+			nest[i] = tokens[i+num_arguments+5];
 			printf("%s, ", nest[i]);
-			if (nest[i] == "(") {
+			if ( strcmp(nest[i], "(") == 0 ) {
 				numOpen += 1;
-			} else if (nest[i] == ")") {
+			} else if (strcmp(nest[i], ")") == 0 ) {
 				numClosed += 1;
 			}
 			i++;
@@ -133,10 +133,13 @@ ast* make_tree(char* tokens[], int length) {
 		ast* tree = make_functionExp(func_name, subtree, num_arguments, arguments);
 
 		Node* node = make_node(func_name, tree, NULL);
+
 		if (head == NULL) {
+			printf("assigning head to %s\n", func_name);
 			head = node;
 		} 
 		if (tail == NULL) {
+			printf("assigning tail to %s\n", func_name);
 			tail = node;
 		} else {
 			tail->next = node;
@@ -147,7 +150,7 @@ ast* make_tree(char* tokens[], int length) {
 	}
 
 	//case: operation
-	else if (tokens[0] == "*" || tokens[0] == "/" || tokens[0] == "+" || tokens[0] == "-") {
+	else if (strcmp(tokens[0], "*") == 0 || strcmp(tokens[0], "/") == 0|| strcmp(tokens[0], "+") == 0 || strcmp(tokens[0], "-") == 0 ) {
 
 		ast* leftTree;
 		int rightIndex;
@@ -162,9 +165,9 @@ ast* make_tree(char* tokens[], int length) {
 			while (numOpen > numClosed && i < length-2) { //currently just assuming this will be passed something syntactically correct lol
 				nest[i] = tokens[i+2];
 				printf("%s, ", nest[i]);
-				if (nest[i] == "(") {
+				if ( strcmp(nest[i], "(") == 0 ) {
 					numOpen += 1;
-				} else if (nest[i] == ")") {
+				} else if (strcmp(nest[i], ")") == 0 ) {
 					numClosed += 1;
 				}
 				i++;
@@ -184,7 +187,7 @@ ast* make_tree(char* tokens[], int length) {
 		}
 
 		//shit's binary
-		if (tokens[rightIndex] != ")") {
+		if ( strcmp(tokens[rightIndex], ")") != 0 ) {
 			printf("binary expression. attempting right tree starting at %i\n", rightIndex);
 
 			ast* rightTree;
@@ -198,9 +201,9 @@ ast* make_tree(char* tokens[], int length) {
 				while (numOpen > numClosed && i < length-2) { //currently just assuming this will be passed something syntactically correct lol
 					nest[i] = tokens[i+rightIndex + 1];
 					printf("%s, ", nest[i]);
-					if (nest[i] == "(") {
-						numOpen += 1;
-					} else if (nest[i] == ")") {
+					if ( strcmp(nest[i], "(") == 0 ) {
+					numOpen += 1;
+					} else if (strcmp(nest[i], ")") == 0 ) {
 						numClosed += 1;
 					}
 					i++;
@@ -231,52 +234,88 @@ ast* make_tree(char* tokens[], int length) {
 
 	else {
 		//check if it's a function
+		printf("checking if it's in the function list. \n");
 		char* func_name = tokens[0];
 		Node* current = head;
 		while (current != NULL) {
 			if (strcmp(current->key, func_name) == 0) {
-				printf("found a function!\n");
+				printf("found a function named %s!\n", current->key);
 				int num_arguments = current->function->op.functionExp.num_arguments;
+
 				for (int i = 0; i < num_arguments; i++) {
 					char* arg = current->function->op.functionExp.arguments[i];
 					int val = atoi(tokens[i+1]); //simplifying to the easiest case. I'll come back to this.
+					printf("%s: %i, ", arg, val);
 					g_hash_table_insert(hash, arg, GINT_TO_POINTER(val)); //this should eventually go in a local variable space.
 				}
 				return current->function;
 			}
+
+			current = current->next;
 		}
 
-		printf("Not a valid symbol %s", tokens[0]);
+		printf("Not a valid symbol %s\n", tokens[0]);
 		return NULL;
 	}
 }
 
-
-int main() {
+/* Takes a lisp file name as input and parses stuff */
+int main(int argc, char *argv[]) { 
 	//initialize global variables
 	hash = g_hash_table_new(g_str_hash, g_str_equal); // a hashtable with strings as keys.
 
-	char* functiontTokens[] = {"defun", "myfun", "(", "y", "z", ")", "(", "+", "y", "z", ")"};
-	char* evalFunctionTokens[] = {"myfun", "5", "7"};
-	ast* first_func = make_tree(functiontTokens, 11);
-	ast* eval_func = make_tree(evalFunctionTokens, 3);
-	int val = eval(eval_func, hash);
+	// char* functiontTokens[] = {"defun", "myfun", "(", "a", "b", "c", ")", "(", "+", "a", "b", ")"};
+	// char* evalFunctionTokens[] = {"myfun", "5", "7", "9"};
+	// ast* first_func = make_tree(functiontTokens, 12);
+	// ast* eval_func = make_tree(evalFunctionTokens, 4);
+	// int val = eval(eval_func, hash);
 
-	printf("%i\n", val);
+	// printf("%i\n", val);
 
-	char* tokens[] = {"*", "5", "7"};
-	char* tokens2[] = { "+", "(", "*", "5", "x", ")", "9"}; // ( + ( * 5 x ) 9 ) = 5*10 + 9 = 59
-	char* tokens3[] = {"+", "(", "*", "5", "(", "/", "6", "3", ")", ")", "9"}; //(+ ( * 5 ( / 6 3 ) ) 9 ) = 5*(-6) + 9 = 19
-	char* tokens4[] = {"defvar", "(", "x", "(", "+", "7", "10", ")"};
-	char* tokens5[] = {"defvar", "(", "x", "10", ")"};
+	// char* tokens1[] = {"*", "5", "7"};
+	// char* tokens2[] = { "+", "(", "*", "5", "x", ")", "9"}; // ( + ( * 5 x ) 9 ) = 5*10 + 9 = 59
+	// char* tokens3[] = {"+", "(", "*", "5", "(", "/", "6", "3", ")", ")", "9"}; //(+ ( * 5 ( / 6 3 ) ) 9 ) = 5*(-6) + 9 = 19
+	// char* tokens4[] = {"defvar", "(", "x", "(", "+", "7", "10", ")"};
+	// char* tokens5[] = {"defvar", "(", "x", "10", ")"};
 
-	ast* tree1 = make_tree(tokens5, 5);
+	// ast* tree1 = make_tree(tokens5, 5);
 
-	ast* tree2 = make_tree(tokens2, 7);
+	// ast* tree2 = make_tree(tokens2, 7);
 
-	int answer = eval(tree2, hash);
+	// int answer = eval(tree2, hash);
 
-	printf("answer: %i\n", answer);
+	// printf("answer: %i\n", answer);
+
+	if (argc > 1) {
+
+		printf("-----\nreading from lisp file.\n");
+
+		FILE *f = fopen(argv[1], "r");
+
+		for (;;) {
+			char line[80];
+			char *token;
+
+			if (fgets(line, 80, f) == NULL) break;
+			token = strtok(line, " ");
+
+			char* tokens[20]; //I need to have some limit on how many symbols in a line, but this is arbitrary.
+			int i = 0;
+			while (token) {
+				printf("%s ", token);
+				if (i != 0) {
+					tokens[i-1] = token;
+				}
+				token = strtok(NULL, " ");
+				i++;
+			}
+			printf("lets make a tree!\n");
+			ast* tree = make_tree(tokens, i-1); //-1 to account for trailing parenthese.
+			int val = eval(tree, hash);
+			printf("\nanswer: %i\n\n", val);
+		}
+		fclose(f);
+	}
 
 	return 0;
 }
