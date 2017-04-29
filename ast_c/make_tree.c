@@ -5,22 +5,22 @@
 #include "ast.h"
 #include "eval.h"
 
-GHashTable* hash;
-
 typedef struct node {
 	struct node *next;
 	char* key;
 	ast* function;
 } Node;
 
+GHashTable* hash;
 Node* head;
 Node* tail;
 
 Node* make_node(char* key, ast* function, Node* next) {
 	Node* node = malloc(sizeof(node));
+	node->next = next;
 	node->key = key;
 	node->function = function;
-	node->next = next;
+	return node;
 }
 
 ast* make_tree(char* tokens[], int length) {
@@ -82,7 +82,8 @@ ast* make_tree(char* tokens[], int length) {
 	else if (strcmp(tokens[0],"defun") == 0 ) {
 		//I don't know how to do an arbitrary number of arguments. I'm just doing two for now.
 		printf("creating function. \n");
-		char* func_name = tokens[1];
+		char* func_name = malloc(sizeof(tokens[1]));
+		strcpy(func_name, tokens[1]);
 
 		//extract variable names starting at tokens[3]
 		char* arguments[length - 3];
@@ -91,7 +92,9 @@ ast* make_tree(char* tokens[], int length) {
 		int numClosed = 0;
 		int i = 0;
 		while (numOpen > numClosed) {
-			arguments[i] = tokens[i+3];
+			char* arg = malloc(sizeof(tokens[i+3]));
+			strcpy(arg, tokens[i+3]);
+			arguments[i] = arg;
 			if ( strcmp(arguments[i], "(") == 0 ) {
 				numOpen += 1;
 			} else if (strcmp(arguments[i], ")") == 0 ) {
@@ -238,7 +241,8 @@ ast* make_tree(char* tokens[], int length) {
 		char* func_name = tokens[0];
 		Node* current = head;
 		while (current != NULL) {
-			if (strcmp(current->key, func_name) == 0) {
+			printf("%s, ", current->key);
+			if ( strcmp(current->key, func_name) == 0) {
 				printf("found a function named %s!\n", current->key);
 				int num_arguments = current->function->op.functionExp.num_arguments;
 
@@ -250,11 +254,10 @@ ast* make_tree(char* tokens[], int length) {
 				}
 				return current->function;
 			}
-
 			current = current->next;
 		}
 
-		printf("Not a valid symbol %s\n", tokens[0]);
+		printf("\nNot a valid symbol %s\n", tokens[0]);
 		return NULL;
 	}
 }
@@ -264,27 +267,27 @@ int main(int argc, char *argv[]) {
 	//initialize global variables
 	hash = g_hash_table_new(g_str_hash, g_str_equal); // a hashtable with strings as keys.
 
-	// char* functiontTokens[] = {"defun", "myfun", "(", "a", "b", "c", ")", "(", "+", "a", "b", ")"};
-	// char* evalFunctionTokens[] = {"myfun", "5", "7", "9"};
-	// ast* first_func = make_tree(functiontTokens, 12);
-	// ast* eval_func = make_tree(evalFunctionTokens, 4);
-	// int val = eval(eval_func, hash);
+	char* functiontTokens[] = {"defun", "myfun", "(", "a", "b", "c", ")", "(", "+", "a", "b", ")"};
+	char* evalFunctionTokens[] = {"myfun", "5", "7", "9"};
+	ast* first_func = make_tree(functiontTokens, 12);
+	ast* eval_func = make_tree(evalFunctionTokens, 4);
+	int val = eval(eval_func, hash);
 
-	// printf("%i\n", val);
+	printf("%i\n", val);
 
-	// char* tokens1[] = {"*", "5", "7"};
-	// char* tokens2[] = { "+", "(", "*", "5", "x", ")", "9"}; // ( + ( * 5 x ) 9 ) = 5*10 + 9 = 59
-	// char* tokens3[] = {"+", "(", "*", "5", "(", "/", "6", "3", ")", ")", "9"}; //(+ ( * 5 ( / 6 3 ) ) 9 ) = 5*(-6) + 9 = 19
-	// char* tokens4[] = {"defvar", "(", "x", "(", "+", "7", "10", ")"};
-	// char* tokens5[] = {"defvar", "(", "x", "10", ")"};
+	char* tokens1[] = {"*", "5", "7"};
+	char* tokens2[] = { "+", "(", "*", "5", "x", ")", "9"}; // ( + ( * 5 x ) 9 ) = 5*10 + 9 = 59
+	char* tokens3[] = {"+", "(", "*", "5", "(", "/", "6", "3", ")", ")", "9"}; //(+ ( * 5 ( / 6 3 ) ) 9 ) = 5*(-6) + 9 = 19
+	char* tokens4[] = {"defvar", "(", "x", "(", "+", "7", "10", ")"};
+	char* tokens5[] = {"defvar", "(", "x", "10", ")"};
 
-	// ast* tree1 = make_tree(tokens5, 5);
+	ast* tree1 = make_tree(tokens5, 5);
 
-	// ast* tree2 = make_tree(tokens2, 7);
+	ast* tree2 = make_tree(tokens2, 7);
 
-	// int answer = eval(tree2, hash);
+	int answer = eval(tree2, hash);
 
-	// printf("answer: %i\n", answer);
+	printf("answer: %i\n", answer);
 
 	if (argc > 1) {
 
