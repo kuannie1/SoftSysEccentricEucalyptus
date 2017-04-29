@@ -4,16 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "parser.h"
-typedef struct node {
-    char* param_name;
-    union {
-        float val_flt;
-    };
-    Type func;
-    struct node *next;
-} Node;
-
-
+#include "paramlist.h"
 
 /* Makes a new node structure.
  * 
@@ -22,8 +13,8 @@ typedef struct node {
  *
  * returns: pointer to a new node
  */
-Node *make_node_float(char* name, float val, Node *next) {
-    Node *node = malloc(sizeof(Node));
+ParamNode *make_param_node_float(char* name, float val, ParamNode *next) {
+    ParamNode *node = malloc(sizeof(ParamNode));
     node->param_name = name;
     node->val_flt = val;
     node->func = FLT;
@@ -34,10 +25,10 @@ Node *make_node_float(char* name, float val, Node *next) {
 
 /* Prints the values in a list.
  * 
- * list: pointer to pointer to Node
+ * list: pointer to pointer to ParamNode
  */
-void print_list(Node **list) {
-    Node *current = *list;
+void print_param_list(ParamNode **list) {
+    ParamNode *current = *list;
 
     printf("[ ");
     while (current != NULL) {
@@ -50,12 +41,12 @@ void print_list(Node **list) {
 
 /* Removes and returns the first element of a list.
  * 
- * list: pointer to pointer to Node
+ * list: pointer to pointer to ParamNode
  *
  * returns: int or -1 if the list is empty
  */
-char* pop(Node **list) {
-    Node *current = *list;
+char* pop_param(ParamNode **list) {
+    ParamNode *current = *list;
 
     if (current == NULL) {
         return "";
@@ -63,7 +54,7 @@ char* pop(Node **list) {
 
     char* headVal = current -> param_name;
 
-    **list = *(current->next);
+    *list = current->next;
 
     return headVal;
 }
@@ -71,18 +62,18 @@ char* pop(Node **list) {
 
 /* Adds a new element to the beginning of the list.
  * 
- * list: pointer to pointer to Node
+ * list: pointer to pointer to ParamNode
  * val: value to add
  */
-void push_float(Node **list, char* name, float val) {
-    Node *newElement = make_node_float(name, val, *list);
+void push_param_float(ParamNode **list, char* name, float val) {
+    ParamNode *newElement = make_param_node_float(name, val, *list);
     *list = newElement; //the list points to this new element node
 }
 
 
 // int main() {
-//     Node *node = make_node_float("x", 1, NULL);
-//     Node **first = &node;
+//     ParamNode *node = make_node_float("x", 1, NULL);
+//     ParamNode **first = &node;
 //     print_list(first);
 //     push_float(first, "y", 2);
 //     print_list(first);

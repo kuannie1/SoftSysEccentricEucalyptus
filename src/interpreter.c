@@ -10,10 +10,11 @@
  *  make interpreter
  *  ./interpreter test.lisp
  */
-
-#include "parser.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+#include "paramlist.h"
+#include "parser.h"
 
 /* eval recursively evaluates an abstract syntax tree
  *
@@ -23,15 +24,35 @@
  * Returns:
  *  flt: final value of evaluation
  */
-float eval(Ast_Node* ast){
+float eval(Ast_Node* ast, ParamNode** vars){
     // return value
     if(ast->func == FLT){
-        return ast->value->flt;
+        return ast->val_flt;
+    }
+    if (ast->func == LET) {
+        float var_val = eval(ast->val_exp, vars);
+        push_param_float(vars, ast->name, var_val);
+        float result = eval(ast->next, vars);
+        pop_param(vars);
+        return result;
+    }
+
+    if (ast->func == VARNAME) {
+        char* variable_name = ast->val_name;
+        ParamNode *current = *vars;
+        while (current != NULL){
+            if (strcmp(current->param_name, variable_name) == 0) {
+                return current->val_flt;
+            }
+            current = current->next;
+        }
+        perror("variable name does not exist");
+        exit(-1);
     }
 
     // binary functions
-    float left_val = eval(ast->left);
-    float right_val = eval(ast->right);
+    float left_val = eval(ast->left, vars);
+    float right_val = eval(ast->right, vars);
 
     switch(ast->func){
         case MULT:  return left_val * right_val;
@@ -44,26 +65,6 @@ float eval(Ast_Node* ast){
     }
 }
 
-/* make_test_tree makes and returns an abstract syntax tree
- * for testing purposes
- *
- * Returns:
- *  ast: pointer to the head Ast_Node
- */
-Ast_Node* make_test_tree(){
-    Ast_Node* ast = malloc(sizeof(Ast_Node));
-    ast->func = ADD;
-    ast->left = malloc(sizeof(Ast_Node));
-    ast->right = malloc(sizeof(Ast_Node));
-
-    ast->left->func = FLT;
-    ast->left->value = malloc(sizeof(AstVal));
-    ast->left->value->flt = 5.5;
-    ast->right->func = FLT;
-    ast->right->value = malloc(sizeof(AstVal));
-    ast->right->value->flt = 6;
-    return ast;
-}
 
 int main(int argc, char** argv){
     if(argc < 2){
@@ -74,7 +75,7 @@ int main(int argc, char** argv){
     FILE *file = fopen(filename, "r");
     Ast_Node* ast = build_tree(file);
 
-    float expression = eval(ast);
+    float expression = eval(ast, malloc(sizeof(ParamNode*)));
     printf("%f\n", expression);
 
     return 0;
