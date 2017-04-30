@@ -4,7 +4,6 @@ layout: post
 cover: cover.jpg
 date:   2017-27-03 12:00:00
 categories: posts
-source-id: 1Y4fFW8D73ttbxVgCn96xcFKfG_tXMEALBgj7vx_yWCo
 published: true
 ---
 # Project Proposal - Eccentric Eucalyptus
