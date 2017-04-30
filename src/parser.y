@@ -40,10 +40,13 @@ FuncNode** funclist;
 %token <keyword> LET_KW DEFUN_KW
 %%
 
-S : exp             {ast = $1; return 0;}
+S : decls exp             {ast = $2; return 0;}
   ;
 
-decl : '(' DEFUN_KW NAME '(' NAME ')' exp ')'       {make_func($3, $5, $7);}
+decls : /*empty*/
+      | decls decl
+
+decl : '(' DEFUN_KW NAME '(' NAME ')' exp ')'       {$$ = make_func($3, $5, $7);}
 
 exp : NUM                                           {$$ = make_ast_node_value((void*) &$1, FLT);}
     | '(' '*' exp exp ')'                           {$$ = make_ast_node_function(MULT, $3, $4);}
@@ -146,10 +149,12 @@ Ast_Node* make_ast_node_func(char* func, Ast_Node* var_value){
     return node;
 }
 
-void make_func(char* name, char* parameter, Ast_Node* exp){
+FuncNode* make_func(char* name, char* parameter, Ast_Node* exp){
     char** param_arr = make_param_arr(1);
     param_arr[0] = parameter;
-    push_func(funclist, name, param_arr, exp);
+    FuncNode* func = make_func_node(name, param_arr, exp, NULL);
+    push_func(funclist, func);
+    return func;
 }
 
 void yyerror(char *msg){

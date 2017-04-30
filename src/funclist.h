@@ -18,6 +18,6 @@ char** make_param_arr(int num_params);
 void free_param_arr(char** param_arr);
 void print_func_list(FuncNode **list);
 char* pop_func(FuncNode **list);
-void push_func(FuncNode **list, char* name, char** parameters, struct ast_node* exp);
+void push_func(FuncNode **list, FuncNode* node);
 
 #endif

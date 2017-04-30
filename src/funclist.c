@@ -45,7 +45,7 @@ char* pop_func(FuncNode **list){
 
     return headVal;
 }
-void push_func(FuncNode **list, char* name, char** parameters, Ast_Node* exp){
-    FuncNode* new_node = make_func_node(name, parameters, exp, *list);
-    *list = new_node;
+void push_func(FuncNode **list, FuncNode* node){
+    node->next = *list;
+    *list = node;
 }
