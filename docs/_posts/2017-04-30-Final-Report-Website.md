@@ -8,8 +8,6 @@ categories: posts
 source-id: 1oKZ7hCTr_D9rOoWEyee8ANtBtfWQYGjwUxBCEpMIeyQ
 published: true
 ---
-eLISP-Cs...
-
 # **Goal and Background**
 
 Our goal is to write an interpreter in C. Our personal learning goals included gaining an understanding of how programming languages are implemented at a low level, and understanding how to parse not only programming languages, but a wide variety of files (such as markup language files). We chose to interpret Lisp, since its syntax, with its heavy reliance on parentheses, facilitated a more straightforward implementation of the parser. By the end, of the project, we had hoped to implement basic numeric operations, functions, and variables, in order to understand parsing and the how the basic building blocks of programming languages worked.
