@@ -27,7 +27,6 @@ FuncNode** funclist;
     float f;
     struct ast_node* node; //can't use typedefs here for some reason
     struct func_node* func;
-    // char ** param_arr;
     char* name;
     char* keyword;
 }
@@ -35,7 +34,6 @@ FuncNode** funclist;
 %token <f> NUM
 %type <node> exp S
 %type <func> decl
-// %type <param_arr> params
 %token <name> NAME
 %token <keyword> LET_KW DEFUN_KW
 %%
@@ -132,12 +130,14 @@ AstNode* make_ast_node_variable(char* vname, AstNode* var_value, AstNode* exp){
 }
 
 
-/* 
+/* make_ast_node_func creates an ast node that references a function
  *
  * Args:
+ *  func: function name
+ *  var_value: the value of the parameter to pass in
  *
  * Returns:
- *  
+ *  node: pointer to the newly created ast_node
  */
 AstNode* make_ast_node_func(char* func, AstNode* var_value){
     AstNode* node = malloc(sizeof(AstNode));
@@ -150,6 +150,17 @@ AstNode* make_ast_node_func(char* func, AstNode* var_value){
     return node;
 }
 
+/* make_func makes a FuncNode, pushes it to the list of functions,
+ * then returns the newly created FuncNode.
+ *
+ * Args:
+ *  name: function name as a string
+ *  parameter: parameter name as a string
+ *  exp: pointer to the function body
+ *
+ * Returns:
+ *  func: pointer to the newly created FuncNode
+ */
 FuncNode* make_func(char* name, char* parameter, AstNode* exp){
     char** param_arr = make_param_arr(1);
     param_arr[0] = parameter;

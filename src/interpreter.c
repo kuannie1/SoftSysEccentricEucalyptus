@@ -20,7 +20,23 @@
 // forward declaration, so `eval_param` can call `eval`
 float eval(AstNode* ast, ParamNode** vars, FuncNode** functions);
 
+/* Given a variable node (type must be LET), adds the
+ * variable into the environment (list of variables)
+ * and evaluates the rest of the tree branch normally.
+ * Afterwards, it removes itself from the environment.
+ *
+ * Args:
+ *  ast: pointer to the head AstNode
+ *  vars: list of variables and their values currently
+ *          in the environment
+ *  functions: list of functions currently in use
+ *
+ * Returns:
+ *  flt: final value of evaluation
+ */
 float eval_param(AstNode* ast, ParamNode** vars, FuncNode** functions){
+    if (ast->type != LET)
+        perror("To use `eval_param`, the top level Ast_Node must have type `LET`");
     float var_val = eval(ast->val_exp, vars, functions);
     push_param_float(vars, ast->name, var_val);
     float result = eval(ast->next, vars, functions);
@@ -32,6 +48,9 @@ float eval_param(AstNode* ast, ParamNode** vars, FuncNode** functions){
  *
  * Args:
  *  ast: pointer to the head AstNode
+ *  vars: list of variables and their values currently
+ *          in the environment
+ *  functions: list of functions currently in use
  *
  * Returns:
  *  flt: final value of evaluation
