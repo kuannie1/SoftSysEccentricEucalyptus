@@ -51,6 +51,7 @@ exp : NUM                                           {$$ = make_ast_node_value((v
     | '(' '+' exp exp ')'                           {$$ = make_ast_node_function(ADD, $3, $4);}
     | '(' '-' exp exp ')'                           {$$ = make_ast_node_function(SUBTR, $3, $4);}
     | '(' '/' exp exp ')'                           {$$ = make_ast_node_function(DIV, $3, $4);}
+    | '(' '^' exp exp ')'                           {$$ = make_ast_node_function(POWER, $3, $4);}
     | '(' exp ')'                                   {$$ = $2;}
     | '(' LET_KW '(' '(' NAME exp ')' ')' exp ')'   {$$ = make_ast_node_variable($5, $6, $9); free($2);}
     | NAME                                          {$$ = make_ast_node_value((void*) $1, VARNAME);}
