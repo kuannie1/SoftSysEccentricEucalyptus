@@ -1,7 +1,6 @@
 ---
 title: Final Report Website
 layout: post
-author: hooticambo
 permalink: /final-report-website/
 cover: cover.jpg
 date:   2017-04-30 12:00:00
