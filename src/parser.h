@@ -64,7 +64,7 @@ typedef struct ast_node{
 AstNode* make_ast_node_function(Type func, AstNode* left, AstNode* right);
 AstNode* make_ast_node_value(void* value, Type func);
 AstNode* make_ast_node_variable(char* vname, AstNode* var_value, AstNode* exp);
-Ast_Node* make_ast_node_func(char* func, AstNode* var_value);
+AstNode* make_ast_node_func(char* func, AstNode* var_value);
 FuncNode* make_func(char* name, char* parameter, AstNode* exp);
 void build_tree(FILE* code, AstNode** ast_pointer, FuncNode** func_list_pointer);
 

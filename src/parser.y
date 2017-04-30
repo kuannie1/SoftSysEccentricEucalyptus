@@ -139,9 +139,9 @@ AstNode* make_ast_node_variable(char* vname, AstNode* var_value, AstNode* exp){
  * Returns:
  *  
  */
-Ast_Node* make_ast_node_func(char* func, Ast_Node* var_value){
-    Ast_Node* node = malloc(sizeof(Ast_Node));
-    node->func = FUNC; 
+AstNode* make_ast_node_func(char* func, AstNode* var_value){
+    AstNode* node = malloc(sizeof(AstNode));
+    node->type = FUNC; 
     node->val_exp = var_value; //THIS IS AN AWFUL IDEA AND NOT SCALABLE
     node->left = NULL; // values don't have progeny
     node->right = NULL;
@@ -150,7 +150,7 @@ Ast_Node* make_ast_node_func(char* func, Ast_Node* var_value){
     return node;
 }
 
-FuncNode* make_func(char* name, char* parameter, Ast_Node* exp){
+FuncNode* make_func(char* name, char* parameter, AstNode* exp){
     char** param_arr = make_param_arr(1);
     param_arr[0] = parameter;
     FuncNode* func = make_func_node(name, param_arr, exp, NULL);
@@ -171,11 +171,7 @@ void yyerror(char *msg){
  *  ast_pointer: pointer to AstNode to pack
  *  func_list_pointer: pointer to funclist to pack
  */
-<<<<<<< HEAD
 void build_tree(FILE* code, AstNode** ast_pointer, FuncNode** func_list_pointer){
-=======
-AstNode* build_tree(FILE* code){
->>>>>>> d219d86406d5ac5db80a38da01e29b7dab5382cc
     yyin = code;
     funclist = malloc(sizeof(FuncNode*));
     yyparse();

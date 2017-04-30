@@ -18,9 +18,9 @@
 #include "funclist.h"
 
 // forward declaration, so `eval_param` can call `eval`
-float eval(Ast_Node* ast, ParamNode** vars, FuncNode** functions);
+float eval(AstNode* ast, ParamNode** vars, FuncNode** functions);
 
-float eval_param(Ast_Node* ast, ParamNode** vars, FuncNode** functions){
+float eval_param(AstNode* ast, ParamNode** vars, FuncNode** functions){
     float var_val = eval(ast->val_exp, vars, functions);
     push_param_float(vars, ast->name, var_val);
     float result = eval(ast->next, vars, functions);
@@ -62,12 +62,12 @@ float eval(AstNode* ast, ParamNode** vars, FuncNode** functions){
         exit(-1);
     }
 
-    if(ast->func == FUNC){
+    if(ast->type == FUNC){
         char* function_name = ast->name;
         FuncNode *current = *functions;
         while (current != NULL){
             if (strcmp(current->func_name, function_name) == 0) {
-                Ast_Node* function_param = make_ast_node_variable(current->parameters[0],
+                AstNode* function_param = make_ast_node_variable(current->parameters[0],
                                                         ast->val_exp, current->exp);
                 return eval_param(function_param, vars, functions);
             }

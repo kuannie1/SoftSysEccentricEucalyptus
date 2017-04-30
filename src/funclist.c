@@ -4,7 +4,7 @@
 #include <stdio.h>
 
 
-FuncNode *make_func_node(char* name, char** parameters, Ast_Node* exp, FuncNode* next){
+FuncNode *make_func_node(char* name, char** parameters, AstNode* exp, FuncNode* next){
     FuncNode* func = malloc(sizeof(FuncNode));
     func->func_name = name;
     func->parameters = parameters;

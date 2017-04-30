@@ -8,7 +8,6 @@ typedef struct func_node {
     char* func_name;
     char** parameters;
     struct ast_node* exp;
-
     struct func_node *next;
 } FuncNode;
 
