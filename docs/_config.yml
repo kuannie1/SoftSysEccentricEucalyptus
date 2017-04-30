@@ -1,5 +1,5 @@
 name: Flex
 # markdown: redcarpet
 # pygments: true
-highlighter: rogue
+highlighter: rouge
 post_assets: images/gdocs
