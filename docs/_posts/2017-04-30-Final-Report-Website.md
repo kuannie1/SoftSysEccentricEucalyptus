@@ -3,6 +3,9 @@ title: Final Report Website
 layout: post
 author: hooticambo
 permalink: /final-report-website/
+cover: cover.jpg
+date:   2017-04-30 12:00:00
+categories: posts
 source-id: 1oKZ7hCTr_D9rOoWEyee8ANtBtfWQYGjwUxBCEpMIeyQ
 published: true
 ---
@@ -10,7 +13,7 @@ published: true
 
 Our goal is to write an interpreter in C. Our personal learning goals included gaining an understanding of how programming languages are implemented at a low level, and understanding how to parse not only programming languages, but a wide variety of files (such as markup language files). We chose to interpret Lisp, since its syntax, with its heavy reliance on parentheses, facilitated a more straightforward implementation of the parser. By the end, of the project, we had hoped to implement basic numeric operations, functions, and variables, in order to understand parsing and the how the basic building blocks of programming languages worked.
 
-Since we wanted gain a deeper understanding of parsing and interpreting programming languages, we split up and implemented two different versions of parsing and interpreting. The first version we have is included within the `src` directory, and includes heavy use of Yacc and Lex to assist with parsing. This version was significantly assisted by Riccardo Pucella, visiting lecturer at Olin. Our conversations with him guided much of the structure we used in the parsing and the interpreter. The other version is included in the directory `ast_c`. This version was less guided by the help of Dr. Pucella, but used Peter Norvig's *Lispy *interpreter, a Lisp interpreter written in Python, as a reference. This version served more as an exploration into how to build an abstract syntax tree and interpret it.
+Since we wanted gain a deeper understanding of parsing and interpreting programming languages, we split up and implemented two different versions of parsing and interpreting. The first version we have is included within the src directory, and includes heavy use of Yacc and Lex to assist with parsing. This version was significantly assisted by Riccardo Pucella, visiting lecturer at Olin. Our conversations with him guided much of the structure we used in the parsing and the interpreter. The other version is included in the directory ast_c. This version was less guided by the help of Dr. Pucella, but used Peter Norvig's *Lispy *interpreter, a Lisp interpreter written in Python, as a reference. This version served more as an exploration into how to build an abstract syntax tree and interpret it.
 
 # **Lisp Interpreter -  Lex and Yacc based**
 
@@ -28,21 +31,32 @@ Known limitations:
 
 # **Lisp Interpreter - Parsing focused**
 
-We made a lisp interpreter using only C, with no external libraries such as lisp or yacc. It recursively builds an abstract syntax tree, then evaluates it. It supports function definitions through defun and variable definitions through defvar, and unary and binary expressions. It reads from a lisp file, then builds a tree and evaluates it. Since our focus for this part was not on the syntax tree itself, but on creating it, much of the code for the tree was borrowed from Leonidas Ferigas. However, the code that builds the tree from an input file was purely built by us.
+We made a lisp interpreter using only C, with no external libraries such as lisp or yacc. It recursively builds an abstract syntax tree, then evaluates it. It supports function definitions through defun and variable definitions through defvar, and unary and binary expressions. It reads from a lisp file, then builds a tree and evaluates it. Since our focus for this part was not on the syntax tree itself, but on creating it, much of the code for the tree was borrowed from Leonidas Ferigas. However, the code that builds the tree from an input file was purely written by us.
 
 Sample input and output: 
 
-`( defun func2 ( a b c ) ( + a b ) )
+<table>
+  <tr>
+    <td>( defun func2 ( a b c ) ( + a b ) )  
+( func2 5 7 9 )</td>
+    <td></td>
+    <td>answer: 12</td>
+  </tr>
+  <tr>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+</table>
 
-( func2 5 7 9 )`
-
-* answer: 12
 
 ( * 5 7 )
 
 answer: 35
 
 ( defvar ( x ( + 7 10 ) ) )
+
+	answer: 17
 
 ( * 2 x )
 
@@ -67,8 +81,6 @@ Known limitations:
 * Finding a user defined function takes linear time with the number of functions that exist
 
 * Every token must have white spaces between it, including nested parentheses
-
-* Eval always returns something, even when it doesn't make sense (such as for a function definition), so it returns -1, which is kind of weird. 
 
 **Authors**
 
