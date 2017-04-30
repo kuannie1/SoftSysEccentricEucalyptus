@@ -1,10 +1,4 @@
 ---
-<!-- title: Project Proposal
-layout: post
-author: hooticambo
-permalink: /projectProposal/
-source-id: 1Y4fFW8D73ttbxVgCn96xcFKfG_tXMEALBgj7vx_yWCo
-published: true -->
 layout: post
 title: Project Proposal
 cover: cover.jpg
