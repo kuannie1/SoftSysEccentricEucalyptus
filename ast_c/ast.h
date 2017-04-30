@@ -2,7 +2,8 @@ typedef struct Exp {
 
 	enum { integer_exp, string_exp, variable_exp,
 		binary_exp, unary_exp, call_exp,
-		projection_exp, record_exp } tag;
+		projection_exp, record_exp ,
+		function_exp } tag;
 
 	union {
 		int integerExp;
@@ -25,6 +26,11 @@ typedef struct Exp {
 		struct rec { char* attribute;
 			struct Exp* value;
 			struct rec* next; } recordExp;
+		//function
+		struct { char* name;
+			struct Exp* func;
+			int num_arguments;
+			char* arguments[]; } functionExp;
 	} op;
 
 } ast;
@@ -42,3 +48,4 @@ ast* make_variableExp( char* variableExp );
 ast* make_callExp( char* name, ast_list* arguments );
 ast* make_projectionExp( ast* record, char* attribute );
 ast* make_recordExp( char* attribute, ast* value, struct rec* next );
+ast* make_functionExp( char* name, ast* func, int num_arguments, char* arguments[] );
