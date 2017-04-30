@@ -13,9 +13,12 @@
 #include <stdlib.h>
 #include <string.h>
 #include "y.tab.h" // generated via yacc -d
+
+#define YY_NO_INPUT
 %}
 
 %option noyywrap
+%option nounput
 
 %%
 

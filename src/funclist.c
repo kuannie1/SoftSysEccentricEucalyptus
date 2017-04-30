@@ -13,6 +13,7 @@
 #include "funclist.h"
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 
 /* Makes a new node structure.
  *
