@@ -11,6 +11,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "parser.h"
 #include "paramlist.h"
 
@@ -86,6 +87,17 @@ void push_param_float(ParamNode **list, char* name, float val) {
     *list = newElement; //the list points to this new element node
 }
 
+float get_value(ParamNode** varlist, char* varname){
+    ParamNode *current = *varlist;
+    while (current != NULL){
+        if (strcmp(current->param_name, varname) == 0) {
+            return current->val_flt;
+        }
+        current = current->next;
+    }
+    perror("variable name does not exist");
+    exit(-1);
+}
 
 // int main() {
 //     ParamNode *node = make_node_float("x", 1, NULL);

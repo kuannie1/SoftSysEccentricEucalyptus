@@ -41,40 +41,23 @@ float eval(AstNode* ast, ParamNode** vars, FuncNode** functions){
     if(ast->type == FLT){
         return ast->val_flt;
     }
-    if (ast->type == LET) {
-        float var_val = eval(ast->val_exp, vars, functions);
-        push_param_float(vars, ast->name, var_val);
-        float result = eval(ast->next, vars, functions);
-        pop_param(vars);
-        return result;
-    }
 
     if (ast->type == VARNAME) {
         char* variable_name = ast->val_name;
-        ParamNode *current = *vars;
-        while (current != NULL){
-            if (strcmp(current->param_name, variable_name) == 0) {
-                return current->val_flt;
-            }
-            current = current->next;
-        }
-        perror("variable name does not exist");
-        exit(-1);
+        return get_value(vars, variable_name);
+    }
+
+    // evaluate some stuff
+    if (ast->type == LET) {
+        return eval_param(ast, vars, functions);
     }
 
     if(ast->type == FUNC){
         char* function_name = ast->name;
-        FuncNode *current = *functions;
-        while (current != NULL){
-            if (strcmp(current->func_name, function_name) == 0) {
-                AstNode* function_param = make_ast_node_variable(current->parameters[0],
-                                                        ast->val_exp, current->exp);
-                return eval_param(function_param, vars, functions);
-            }
-            current = current->next;
-        }
-        perror("function does not exist");
-        exit(-1);
+        FuncNode* function = get_function(functions, function_name);
+        AstNode* function_param = make_ast_node_variable(function->parameters[0],
+                                                        ast->val_exp, function->exp);
+        return eval_param(function_param, vars, functions);
     }
 
     // binary functions

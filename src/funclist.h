@@ -18,5 +18,6 @@ void free_param_arr(char** param_arr);
 void print_func_list(FuncNode **list);
 char* pop_func(FuncNode **list);
 void push_func(FuncNode **list, FuncNode* node);
+FuncNode* get_function(FuncNode** functions, char* func_name);
 
 #endif

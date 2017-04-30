@@ -49,3 +49,15 @@ void push_func(FuncNode **list, FuncNode* node){
     node->next = *list;
     *list = node;
 }
+
+FuncNode* get_function(FuncNode** functions, char* func_name){
+    FuncNode *current = *functions;
+    while (current != NULL){
+        if (strcmp(current->func_name, func_name) == 0) {
+            return current;
+        }
+        current = current->next;
+    }
+    perror("function does not exist");
+    exit(-1);
+}
