@@ -74,11 +74,17 @@ float eval(AstNode* ast, ParamNode** vars, FuncNode** functions){
     if(ast->type == FUNC){
         char* function_name = ast->name;
         FuncNode* function = get_function(functions, function_name);
+
+        // creating function environment
         AstNode* function_param = make_ast_node_variable(function->parameters[0],
                                                         ast->val_exp, function->exp);
         ParamNode** function_environment = malloc(sizeof(ParamNode*));
+        // evaluate function
         float result = eval_param(function_param, function_environment, functions);
+
+        // free function environment
         free(function_environment);
+        free(function_param);
         return result;
     }
 
@@ -111,7 +117,14 @@ int main(int argc, char** argv){
     build_tree(file, ast, funclist);
     ParamNode** environment = malloc(sizeof(ParamNode*));
     float expression = eval(*ast, environment, funclist);
+
+    //free everything
     free(environment);
+    free_tree(*ast);
+    free(ast);
+    free_funclist(funclist);
+    free(funclist);
+
     printf("%f\n", expression);
 
     return 0;

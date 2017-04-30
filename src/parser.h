@@ -67,5 +67,6 @@ AstNode* make_ast_node_variable(char* vname, AstNode* var_value, AstNode* exp);
 AstNode* make_ast_node_func(char* func, AstNode* var_value);
 FuncNode* make_func(char* name, char* parameter, AstNode* exp);
 void build_tree(FILE* code, AstNode** ast_pointer, FuncNode** func_list_pointer);
+void free_tree(AstNode* node);
 
 #endif

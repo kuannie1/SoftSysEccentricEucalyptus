@@ -21,21 +21,24 @@
  *  parameters: array of parameters, as strings
  *  exp: function body as an abstract syntax tree
  *  next: reference to the next FuncNode
+ *  num_params: the number of parameters
  */
 typedef struct func_node {
     char* func_name;
     char** parameters;
     struct ast_node* exp;
     struct func_node *next;
+    int num_params;
 } FuncNode;
 
-FuncNode *make_func_node(char* name, char** parameters, struct ast_node* exp, FuncNode* next);
+FuncNode *make_func_node(char* name, char** parameters, struct ast_node* exp, FuncNode* next, int num_params);
 void free_func_node(FuncNode* node);
 char** make_param_arr(int num_params);
-void free_param_arr(char** param_arr);
+void free_param_arr(char** param_arr, int num_params);
 void print_func_list(FuncNode **list);
 char* pop_func(FuncNode **list);
 void push_func(FuncNode **list, FuncNode* node);
 FuncNode* get_function(FuncNode** functions, char* func_name);
+void free_funclist(FuncNode** list);
 
 #endif
