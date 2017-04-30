@@ -21,7 +21,7 @@ typedef enum function{
     FLT,
     LET,
     VARNAME,
-    LAMBDA
+    DEFUN
 } Type;
 
 /* ast_node struct serves as the building block of our abstract

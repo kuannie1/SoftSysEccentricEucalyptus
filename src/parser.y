@@ -13,30 +13,35 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "parser.h"
+#include "funclist.h"
 
 extern int yylex();
 extern FILE *yyin;
 void yyerror(char *msg);
 
 struct ast_node* ast;
+FuncNode** funclist = NULL;
 %}
 
 %union {
     float f;
     struct ast_node* node; //can't use typedefs here for some reason
+    struct func_node* func;
     char* name;
     char* keyword;
 }
 
 %token <f> NUM
 %type <node> exp S
-%token <name> VNAME
-%token <keyword> LET_KW
-// Make another one that's for defun later
+%type <func> decl
+%token <name> NAME
+%token <keyword> LET_KW DEFUN_KW
 %%
 
 S : exp             {ast = $1; return 0;}
   ;
+
+decl : '(' DEFUN_KW NAME '(' NAME ')' exp ')'       {$$ = make_func($3, $5, $7);}
 
 exp : NUM                                           {$$ = make_ast_node_value((void*) &$1, FLT);}
     | '(' '*' exp exp ')'                           {$$ = make_ast_node_function(MULT, $3, $4);}
@@ -44,9 +49,12 @@ exp : NUM                                           {$$ = make_ast_node_value((v
     | '(' '-' exp exp ')'                           {$$ = make_ast_node_function(SUBTR, $3, $4);}
     | '(' '/' exp exp ')'                           {$$ = make_ast_node_function(DIV, $3, $4);}
     | '(' exp ')'                                   {$$ = $2;}
-    | '(' LET_KW '(' '(' VNAME exp ')' ')' exp ')'  {$$ = make_ast_node_variable($5, $6, $9);}
-    | VNAME                                         {$$ = make_ast_node_value((void*) $1, VARNAME);}                 
+    | '(' LET_KW '(' '(' NAME exp ')' ')' exp ')'   {$$ = make_ast_node_variable($5, $6, $9);}
+    | NAME                                          {$$ = make_ast_node_value((void*) $1, VARNAME);}
+    | '(' NAME exp')'
     ;
+
+
 
 %%
 
@@ -114,6 +122,12 @@ Ast_Node* make_ast_node_variable(char* vname, Ast_Node* var_value, Ast_Node* exp
     node->next = exp;
     node->name = vname;
     return node;
+}
+
+void make_func(char* name, char* parameter, Ast_Node* exp){
+    char** param_arr = make_param_arr(1);
+    param_arr[0] = parameter;
+    push_func(funclist, name, param_arr, exp);
 }
 
 void yyerror(char *msg){
