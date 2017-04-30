@@ -69,7 +69,8 @@ char** make_param_arr(int num_params){
  *  num_params: the number of parameters
  */
 void free_param_arr(char** param_arr, int num_params){
-    for(int i = 0; i<num_params; i++){
+    int i;
+    for(i = 0; i<num_params; i++){
         free(param_arr[i]);
     }
     free(param_arr);
