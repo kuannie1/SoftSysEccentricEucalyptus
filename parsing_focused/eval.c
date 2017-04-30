@@ -14,7 +14,7 @@ By Margo Crawford.
 
 int eval(ast* expression, GHashTable* vars) {
 	if (expression == NULL) {
-		return -1;
+		return;
 	}
 	//binary expression
 	if (expression-> tag == binary_exp) {

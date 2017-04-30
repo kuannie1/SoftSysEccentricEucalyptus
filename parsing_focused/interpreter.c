@@ -2,17 +2,13 @@
 Code to build an abstract syntax tree, which is done recursively. 
 
 To use, run:
-$ make make_tree
-$ ./make_tree [LISP FILE]
+$ make interpreter
+$ ./interpreter [LISP FILE]
 
 Lisp files can contain functions defined with defun, variables defined with defvar, and unary or binary arithmetic operations. 
 Tokens in a lisp file should be separated by spaces for proper splitting. 
 
 */
-
-/* Fills out a new subarray that contains a nested array in the outermost parentheses.
-Returns the length of the subarray as an integer. */
-
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -21,6 +17,7 @@ Returns the length of the subarray as an integer. */
 #include "ast.h"
 #include "eval.h"
 
+/* A node of a linked list of functions.*/
 typedef struct node {
 	struct node *next;
 	char* key;
@@ -31,6 +28,7 @@ GHashTable* hash;
 Node* head;
 Node* tail;
 
+/* creates a function node and adds it to the linked list. */
 Node* make_node(char* key, ast* function, Node* next) {
 	Node* node = malloc(sizeof(node));
 	node->next = next;
@@ -39,13 +37,14 @@ Node* make_node(char* key, ast* function, Node* next) {
 	return node;
 }
 
+/* Fills out a new subarray that contains a nested array in the outermost parentheses.
+Returns the length of the subarray as an integer. */
 int make_subarray(char* original[], char* nest[], int offset, int length) {
 	int numOpen = 1;
 	int numClosed = 0;
 	int i = 0;
 	while (numOpen > numClosed && i < length-offset+1){
 		nest[i] = original[i+offset];
-		printf("%s, ", nest[i]);
 		if ( strcmp(nest[i], "(") == 0 ) {
 			numOpen += 1;
 		} else if (strcmp(nest[i], ")") == 0 ) {
@@ -56,6 +55,7 @@ int make_subarray(char* original[], char* nest[], int offset, int length) {
 	return i;
 }
 
+/* Given a list of tokens and a length, creates an abstract syntax tree. */
 ast* make_tree(char* tokens[], int length) {
 
 	//case: integer
@@ -68,47 +68,30 @@ ast* make_tree(char* tokens[], int length) {
 	}
 	//case: variable definition
 	else if (strcmp(tokens[0],"defvar") == 0 ) {
-		printf("\n making a variable\n");
-
 		char* varName = tokens[2];
-
 		ast* leftTree;
-
 		if (strcmp(tokens[3], "(") == 0 ) {
 			char* nest[length-2];
-
 			int i = make_subarray(tokens, nest, 4, length);
-
-			printf("\n----------\n");
 			leftTree = make_tree(nest, i);
-			printf("\n----------\n");
 		}
-
 		else {
+			printf("integer input");
 			char* nest[] = {tokens[3]};
 			leftTree = make_tree(nest, 1);
 		}
-
 		int varValue = eval(leftTree, hash);
-		printf("value: %i", varValue);
-
 		g_hash_table_insert(hash, varName, GINT_TO_POINTER(varValue));
 		ast* var = make_variableExp(varName);
-
 		return var;
 
 	}
 
 	//function definition
 	else if (strcmp(tokens[0],"defun") == 0 ) {
-		//I don't know how to do an arbitrary number of arguments. I'm just doing two for now.
-		printf("creating function. \n");
 		char* func_name = malloc(sizeof(tokens[1]));
 		strcpy(func_name, tokens[1]);
-
-		//extract variable names starting at tokens[3]
-		char* arguments[length - 3];
-
+		char* arguments[length - 3]; //extract variable names starting at tokens[3]
 		int numOpen = 1;
 		int numClosed = 0;
 		int i = 0;
@@ -123,62 +106,37 @@ ast* make_tree(char* tokens[], int length) {
 			}
 			i++;
 		}
-
 		int num_arguments = i-1;
-
-		printf("function name: %s. arguments: ", func_name );
-
 		for (int j = 0; j < i-1; j++ ) {
 			char* arg = arguments[j];
 			g_hash_table_insert(hash, arg, GINT_TO_POINTER(1));
-			printf("%s, ", arg);
 		}
-
-		printf(" ( %i arguments total ).\nfunction body: ", num_arguments);
 		char* nest[length-5];
-
 		i = make_subarray(tokens, nest, 5 + num_arguments, length);
-
-		printf("\n----------\n");
 		ast* subtree = make_tree(nest, i);
-		printf("\n----------\n");
-
 		ast* tree = make_functionExp(func_name, subtree, num_arguments, arguments);
-
 		Node* node = make_node(func_name, tree, NULL);
-
 		if (head == NULL) {
-			printf("assigning head to %s\n", func_name);
 			head = node;
 		} 
 		if (tail == NULL) {
-			printf("assigning tail to %s\n", func_name);
 			tail = node;
 		} else {
 			tail->next = node;
 			tail = node;
 		}
-
-		return tree;
+		return NULL;
 	}
 
 	//case: operation
 	else if (strcmp(tokens[0], "*") == 0 || strcmp(tokens[0], "/") == 0|| strcmp(tokens[0], "+") == 0 || strcmp(tokens[0], "-") == 0 ) {
-
 		ast* leftTree;
 		int rightIndex;
-
 		//nested case
 		if ( strcmp(tokens[1],"(") == 0 ){
-			printf("nested expression to evaluate\n");
 			char* nest[length-2];
-
 			int i = make_subarray(tokens, nest, 2, length);
-
-			printf("\n----------\n");
 			leftTree = make_tree(nest, i);
-			printf("\n----------\n");
-			printf("created left tree.\n");
 			rightIndex = i+2;
 		}
 		//non-nested case
@@ -187,57 +145,56 @@ ast* make_tree(char* tokens[], int length) {
 			leftTree = make_tree(nest, 1);
 			rightIndex = 2;
 		}
-
 		//shit's binary
 		if ( strcmp(tokens[rightIndex], ")") != 0 ) {
-			printf("binary expression. attempting right tree starting at %i\n", rightIndex);
 
 			ast* rightTree;
 			if ( strcmp(tokens[rightIndex],"(") == 0 ) { 
-				printf("nested expression to evaluate\n");
-
 				char* nest[length-2];
-
 				int i = make_subarray(tokens, nest, rightIndex+1, length);
-
-				printf("\n----------\n");
 				rightTree = make_tree(nest, i);
-				printf("\n----------\n");
-				printf("created right tree. \n");
-
 			} else {
 				char* nest[] = {tokens[rightIndex]};
 				rightTree = make_tree(nest, 1);
 			}
-
 			ast* retval = make_binaryExp(tokens[0], leftTree, rightTree);
-			printf("made the tree\n");
 			return retval;
 		}
 
 		//shit's unary
 		else {
-			printf("Found a unary expression");
 			ast* retval = make_unaryExp(tokens[0], leftTree);
 			return retval;
+		}
+	//if statement
+	} else if ( strcmp(tokens[0], "if") == 0 ) {
+		//if true
+		if ( strcmp(tokens[1], "t") == 0 ) {
+			int val = atoi(tokens[2]);
+			return make_integerExp(val);
+		//if false
+		} else if ( strcmp(tokens[1], "nil") == 0 ) {
+			int val = atoi(tokens[3]);
+			return make_integerExp(val);
+		}
+		else {
+			perror("not a valid boolean operator");
+			exit(-1);
 		}
 	}
 
 	else {
 		//check if it's a function
-		printf("checking if it's in the function list. \n");
+
 		char* func_name = tokens[0];
 		Node* current = head;
 		while (current != NULL) {
-			printf("%s, ", current->key);
 			if ( strcmp(current->key, func_name) == 0) {
-				printf("found a function named %s!\n", current->key);
 				int num_arguments = current->function->op.functionExp.num_arguments;
-				printf("num_arguments: %i\n", num_arguments);
 				int arg_num = 0; 
 				int i  = 0;
-				while (arg_num < num_arguments && i < length) {
-					char* arg = current->function->op.functionExp.arguments[i];
+				while ((arg_num < num_arguments) && (i < length)) {
+					char* arg_original = current->function->op.functionExp.arguments[i];
 					int val;
 					if (atoi(tokens[i+1]) != 0 || strcmp(tokens[i+1], "0") == 0 ) {
 						val = atoi(tokens[i+1]); 
@@ -245,38 +202,29 @@ ast* make_tree(char* tokens[], int length) {
 						i++;
 					} else if (strcmp(tokens[i+1], "(") == 0 ) {
 						char* nest[length-2];
-						// int numOpen = 1;
-						// int numClosed = 0;
-						// int j = 0; 
-						// while (numOpen > numClosed && j < length-2) { 
-						// 	nest[i] = tokens[j+3];
-						// 	printf("%s, ", nest[j]);
-						// 	if ( strcmp(nest[j], "(") == 0 ) {
-						// 		numOpen += 1;
-						// 	} else if (strcmp(nest[j], ")") == 0 ) {
-						// 		numClosed += 1;
-						// 	}
-						// 	j++;
-						// }
-						printf("\n");
+						printf("\nnest");
 						int j = make_subarray(tokens, nest, i+2, length);
 						i += (j + arg_num);
 						arg_num++;
 						ast* tree = make_tree(nest, j);
 						val = eval(tree, hash);
+					} else {
+						perror("not a valid input. ");
+						exit(-1);
 					}
 
+					char* arg = malloc(sizeof(arg_original));
+					strcpy(arg, arg_original);
 					printf("%s: %i, ", arg, val);
-					g_hash_table_insert(hash, arg, GINT_TO_POINTER(val)); //this should eventually go in a local variable space.
+					gpointer* val_pointer = GINT_TO_POINTER(val);
+
+					g_hash_table_insert(hash, arg, val_pointer); //this should eventually go in a local variable space.
 					printf("(%i, %i) ", arg_num, i);
-					printf("\n %s", tokens[i+1]);
 				}
-				printf("\ninserted all arguments. ");
 				return current->function;
 			}
 			current = current->next;
 		}
-
 		printf("\nNot a valid symbol %s\n", tokens[0]);
 		return NULL;
 	}
@@ -310,10 +258,13 @@ int main(int argc, char *argv[]) {
 				token = strtok(NULL, " ");
 				i++;
 			}
-
 			ast* tree = make_tree(tokens, i-1); //-1 to account for trailing parenthese.
 			int val = eval(tree, hash);
-			printf("\nanswer: %i\n\n", val);
+			if (eval(tree, hash) != NULL) {
+				printf("\nanswer: %i\n\n", val);
+			} else {
+				printf("\n\n");
+			}
 		}
 		fclose(f);
 	}
