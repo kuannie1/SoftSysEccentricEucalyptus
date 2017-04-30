@@ -76,7 +76,10 @@ float eval(AstNode* ast, ParamNode** vars, FuncNode** functions){
         FuncNode* function = get_function(functions, function_name);
         AstNode* function_param = make_ast_node_variable(function->parameters[0],
                                                         ast->val_exp, function->exp);
-        return eval_param(function_param, vars, functions);
+        ParamNode** function_environment = malloc(sizeof(ParamNode*));
+        float result = eval_param(function_param, function_environment, functions);
+        free(function_environment);
+        return result;
     }
 
     // binary functions
@@ -106,7 +109,9 @@ int main(int argc, char** argv){
     AstNode** ast = malloc(sizeof(AstNode*));
     FuncNode** funclist = malloc(sizeof(FuncNode*));
     build_tree(file, ast, funclist);
-    float expression = eval(*ast, malloc(sizeof(ParamNode*)), funclist);
+    ParamNode** environment = malloc(sizeof(ParamNode*));
+    float expression = eval(*ast, environment, funclist);
+    free(environment);
     printf("%f\n", expression);
 
     return 0;
