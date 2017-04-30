@@ -1,11 +1,12 @@
 
 # Created by https://www.gitignore.io/api/c,c++,vim,sublimetext
 
-src/interpreter
-src/parser
-src/lex.yy.c
-src/y.tab.c
-src/y.tab.h
+lexyacc/interpreter
+lexyacc/parser
+lexyacc/lex.yy.c
+lexyacc/y.tab.c
+lexyacc/y.tab.h
+parsing_focused/interpreter
 
 ### C ###
 # Prerequisites
