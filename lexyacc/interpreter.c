@@ -16,6 +16,7 @@
 #include "paramlist.h"
 #include "parser.h"
 #include "funclist.h"
+#include <math.h>
 
 // forward declaration, so `eval_param` can call `eval`
 float eval(AstNode* ast, ParamNode** vars, FuncNode** functions);
@@ -98,6 +99,7 @@ float eval(AstNode* ast, ParamNode** vars, FuncNode** functions){
         case ADD:   return left_val + right_val;
         case SUBTR: return left_val - right_val;
         case DIV:   return left_val / right_val;
+        case POWER: return powf(left_val, right_val);
         default:
             perror("why are we here");
             exit(-1);

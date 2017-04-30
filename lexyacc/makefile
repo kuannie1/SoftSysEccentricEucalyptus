@@ -9,7 +9,7 @@ lex.yy.c: lexer.l
 # 	cc lex.yy.c y.tab.c y.tab.h -o parser
 
 interpreter: interpreter.c parser.h y.tab.c lex.yy.c y.tab.h
-	gcc -Wall -g interpreter.c paramlist.c funclist.c lex.yy.c y.tab.c -o interpreter
+	gcc -Wall -g interpreter.c paramlist.c funclist.c lex.yy.c y.tab.c -o interpreter -lm
 	rm y.tab.c
 	rm lex.yy.c
 	rm y.tab.h

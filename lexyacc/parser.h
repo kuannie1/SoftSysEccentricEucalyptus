@@ -25,6 +25,7 @@ typedef enum{
     MULT,
     SUBTR,
     DIV,
+    POWER,
     FLT,
     LET,
     VARNAME,

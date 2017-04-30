@@ -25,14 +25,14 @@ sudo apt-get install flex bison
 ## Usage
 ### Using the Lex and Yacc based interpreter
 ```bash
-cd SoftSysEccentricEucalyptus/src
+cd SoftSysEccentricEucalyptus/lexyacc
 make interpreter
 ./interpreter <lisp file>
 ```
 There is a test lisp file included in the directory, called `test.lisp`.
 ### Using the parsing focused interpreter
 ```bash
-cd SoftSysEccentricEucalyptus/ast_c
+cd SoftSysEccentricEucalyptus/parsing_focused
 make interpreter
 ./interpreter <lisp file>
 ```
