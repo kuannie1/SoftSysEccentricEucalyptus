@@ -5,6 +5,6 @@ eval.o: eval.c eval.h
 	gcc -c eval.c `pkg-config --cflags --libs glib-2.0`
 
 interpreter: ast.o eval.o interpreter.c
-	gcc -g ast.o eval.o interpreter.c -o interpreter `pkg-config --cflags --libs glib-2.0`
+	gcc -Wall ast.o eval.o interpreter.c -o interpreter `pkg-config --cflags --libs glib-2.0`
 
 

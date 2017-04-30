@@ -91,10 +91,7 @@ ast* make_tree(char* tokens[], int length) {
 	else if (strcmp(tokens[0],"defun") == 0 ) {
 		char* func_name = malloc(sizeof(tokens[1]));
 		strcpy(func_name, tokens[1]);
-
-		//extract variable names starting at tokens[3]
-		char* arguments[length - 3];
-
+		char* arguments[length - 3]; //extract variable names starting at tokens[3]
 		int numOpen = 1;
 		int numClosed = 0;
 		int i = 0;
@@ -109,21 +106,16 @@ ast* make_tree(char* tokens[], int length) {
 			}
 			i++;
 		}
-
 		int num_arguments = i-1;
-
 		for (int j = 0; j < i-1; j++ ) {
 			char* arg = arguments[j];
 			g_hash_table_insert(hash, arg, GINT_TO_POINTER(1));
 		}
-
 		char* nest[length-5];
-
 		i = make_subarray(tokens, nest, 5 + num_arguments, length);
 		ast* subtree = make_tree(nest, i);
 		ast* tree = make_functionExp(func_name, subtree, num_arguments, arguments);
 		Node* node = make_node(func_name, tree, NULL);
-
 		if (head == NULL) {
 			head = node;
 		} 
@@ -133,22 +125,17 @@ ast* make_tree(char* tokens[], int length) {
 			tail->next = node;
 			tail = node;
 		}
-
-		return tree;
+		return NULL;
 	}
 
 	//case: operation
 	else if (strcmp(tokens[0], "*") == 0 || strcmp(tokens[0], "/") == 0|| strcmp(tokens[0], "+") == 0 || strcmp(tokens[0], "-") == 0 ) {
-
 		ast* leftTree;
 		int rightIndex;
-
 		//nested case
 		if ( strcmp(tokens[1],"(") == 0 ){
 			char* nest[length-2];
-
 			int i = make_subarray(tokens, nest, 2, length);
-
 			leftTree = make_tree(nest, i);
 			rightIndex = i+2;
 		}
@@ -158,24 +145,18 @@ ast* make_tree(char* tokens[], int length) {
 			leftTree = make_tree(nest, 1);
 			rightIndex = 2;
 		}
-
 		//shit's binary
 		if ( strcmp(tokens[rightIndex], ")") != 0 ) {
 
 			ast* rightTree;
 			if ( strcmp(tokens[rightIndex],"(") == 0 ) { 
-
 				char* nest[length-2];
-
 				int i = make_subarray(tokens, nest, rightIndex+1, length);
-
 				rightTree = make_tree(nest, i);
-
 			} else {
 				char* nest[] = {tokens[rightIndex]};
 				rightTree = make_tree(nest, 1);
 			}
-
 			ast* retval = make_binaryExp(tokens[0], leftTree, rightTree);
 			return retval;
 		}
@@ -185,20 +166,35 @@ ast* make_tree(char* tokens[], int length) {
 			ast* retval = make_unaryExp(tokens[0], leftTree);
 			return retval;
 		}
+	//if statement
+	} else if ( strcmp(tokens[0], "if") == 0 ) {
+		//if true
+		if ( strcmp(tokens[1], "t") == 0 ) {
+			int val = atoi(tokens[2]);
+			return make_integerExp(val);
+		//if false
+		} else if ( strcmp(tokens[1], "nil") == 0 ) {
+			int val = atoi(tokens[3]);
+			return make_integerExp(val);
+		}
+		else {
+			perror("not a valid boolean operator");
+			exit(-1);
+		}
 	}
 
 	else {
 		//check if it's a function
+
 		char* func_name = tokens[0];
 		Node* current = head;
 		while (current != NULL) {
-			printf("%s, ", current->key);
 			if ( strcmp(current->key, func_name) == 0) {
 				int num_arguments = current->function->op.functionExp.num_arguments;
 				int arg_num = 0; 
 				int i  = 0;
 				while ((arg_num < num_arguments) && (i < length)) {
-					char* arg = current->function->op.functionExp.arguments[i];
+					char* arg_original = current->function->op.functionExp.arguments[i];
 					int val;
 					if (atoi(tokens[i+1]) != 0 || strcmp(tokens[i+1], "0") == 0 ) {
 						val = atoi(tokens[i+1]); 
@@ -206,20 +202,7 @@ ast* make_tree(char* tokens[], int length) {
 						i++;
 					} else if (strcmp(tokens[i+1], "(") == 0 ) {
 						char* nest[length-2];
-						// int numOpen = 1;
-						// int numClosed = 0;
-						// int j = 0; 
-						// while (numOpen > numClosed && j < length-2) { 
-						// 	nest[i] = tokens[j+3];
-						// 	printf("%s, ", nest[j]);
-						// 	if ( strcmp(nest[j], "(") == 0 ) {
-						// 		numOpen += 1;
-						// 	} else if (strcmp(nest[j], ")") == 0 ) {
-						// 		numClosed += 1;
-						// 	}
-						// 	j++;
-						// }
-						printf("\n");
+						printf("\nnest");
 						int j = make_subarray(tokens, nest, i+2, length);
 						i += (j + arg_num);
 						arg_num++;
@@ -230,15 +213,18 @@ ast* make_tree(char* tokens[], int length) {
 						exit(-1);
 					}
 
+					char* arg = malloc(sizeof(arg_original));
+					strcpy(arg, arg_original);
 					printf("%s: %i, ", arg, val);
-					g_hash_table_insert(hash, arg, GINT_TO_POINTER(val)); //this should eventually go in a local variable space.
+					gpointer* val_pointer = GINT_TO_POINTER(val);
+
+					g_hash_table_insert(hash, arg, val_pointer); //this should eventually go in a local variable space.
 					printf("(%i, %i) ", arg_num, i);
 				}
 				return current->function;
 			}
 			current = current->next;
 		}
-
 		printf("\nNot a valid symbol %s\n", tokens[0]);
 		return NULL;
 	}
@@ -272,10 +258,13 @@ int main(int argc, char *argv[]) {
 				token = strtok(NULL, " ");
 				i++;
 			}
-
 			ast* tree = make_tree(tokens, i-1); //-1 to account for trailing parenthese.
 			int val = eval(tree, hash);
-			printf("\nanswer: %i\n\n", val);
+			if (eval(tree, hash) != NULL) {
+				printf("\nanswer: %i\n\n", val);
+			} else {
+				printf("\n\n");
+			}
 		}
 		fclose(f);
 	}
