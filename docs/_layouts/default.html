@@ -24,13 +24,13 @@
       <div class="sidebar" id="sidebar">
         <div class="header">
           <h1 class="title"><a href="/SoftSysEccentricEucalyptus/"><img id="logo" src="/SoftSysEccentricEucalyptus/images/logo.png"></a></h1>
-          <span class="tagline">A responsive Jekyll theme</span>
+          <span class="tagline">A C lisp interpreter</span>
         </div>
         <div class="posts">
           <ul class="posts-list">
             {% for post in site.posts %}
               <li class="post-link">
-                <a class="post-title" href="{{ post.url }}">
+                <a class="post-title" href="/SoftSysEccentricEucalyptus{{ post.url }}">
                   <span class="post-date">{{ post.date | date_to_string }}</span>
                   {{ post.title }}
                 </a>

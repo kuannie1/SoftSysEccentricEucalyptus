@@ -70,6 +70,7 @@ char* pop_param(ParamNode **list) {
     char* name = current -> param_name;
 
     *list = current->next;
+    free(current);
 
     return name;
 }

@@ -44,7 +44,7 @@ S : decls exp             {ast = $2; return 0;}
 decls : /*empty*/
       | decls decl
 
-decl : '(' DEFUN_KW NAME '(' NAME ')' exp ')'       {$$ = make_func($3, $5, $7);}
+decl : '(' DEFUN_KW NAME '(' NAME ')' exp ')'       {$$ = make_func($3, $5, $7); free($2);}
 
 exp : NUM                                           {$$ = make_ast_node_value((void*) &$1, FLT);}
     | '(' '*' exp exp ')'                           {$$ = make_ast_node_function(MULT, $3, $4);}
@@ -52,7 +52,7 @@ exp : NUM                                           {$$ = make_ast_node_value((v
     | '(' '-' exp exp ')'                           {$$ = make_ast_node_function(SUBTR, $3, $4);}
     | '(' '/' exp exp ')'                           {$$ = make_ast_node_function(DIV, $3, $4);}
     | '(' exp ')'                                   {$$ = $2;}
-    | '(' LET_KW '(' '(' NAME exp ')' ')' exp ')'   {$$ = make_ast_node_variable($5, $6, $9);}
+    | '(' LET_KW '(' '(' NAME exp ')' ')' exp ')'   {$$ = make_ast_node_variable($5, $6, $9); free($2);}
     | NAME                                          {$$ = make_ast_node_value((void*) $1, VARNAME);}
     | '(' NAME exp ')'                              {$$ = make_ast_node_func($2, $3);}
     ;
@@ -164,7 +164,7 @@ AstNode* make_ast_node_func(char* func, AstNode* var_value){
 FuncNode* make_func(char* name, char* parameter, AstNode* exp){
     char** param_arr = make_param_arr(1);
     param_arr[0] = parameter;
-    FuncNode* func = make_func_node(name, param_arr, exp, NULL);
+    FuncNode* func = make_func_node(name, param_arr, exp, NULL, 1);
     push_func(funclist, func);
     return func;
 }
@@ -188,6 +188,38 @@ void build_tree(FILE* code, AstNode** ast_pointer, FuncNode** func_list_pointer)
     yyparse();
     *ast_pointer = ast;
     *func_list_pointer = *funclist;
+}
+
+/* Frees an AstNode tree
+ * 
+ * Args:
+ *  node: the head of the tree to free
+ */
+void free_tree(AstNode* node){
+    if(node->left != NULL){
+        free_tree(node->left);
+    }
+    if(node->right != NULL){
+        free_tree(node->right);
+    }
+    if(node->next != NULL){
+        free_tree(node->next);
+    }
+    switch(node->type){
+        case FUNC:
+            free_tree(node->val_exp);
+            free(node->name);
+            break;
+        case LET:
+            free_tree(node->val_exp);
+            free(node->name);
+            break;
+        case VARNAME:
+            free(node->val_name);
+            break;
+        default: break;
+    }
+    free(node);
 }
 
 // int main() {

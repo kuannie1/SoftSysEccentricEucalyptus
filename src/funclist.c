@@ -13,6 +13,7 @@
 #include "funclist.h"
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 
 /* Makes a new node structure.
  *
@@ -21,16 +22,18 @@
  *  parameters: the parameters as an array of strings
  *  exp: the function body
  *  next: the node that follows this
+ *  num_params: the number of parameters
  *
  * Returns:
  *  node: the pointer to the new node
  */
-FuncNode *make_func_node(char* name, char** parameters, AstNode* exp, FuncNode* next){
+FuncNode *make_func_node(char* name, char** parameters, AstNode* exp, FuncNode* next, int num_params){
     FuncNode* func = malloc(sizeof(FuncNode));
     func->func_name = name;
     func->parameters = parameters;
     func->exp = exp;
     func->next = next;
+    func->num_params = num_params;
     return func;
 }
 
@@ -40,6 +43,9 @@ FuncNode *make_func_node(char* name, char** parameters, AstNode* exp, FuncNode* 
  *  node: the node to free
  */
 void free_func_node(FuncNode* node){
+    free(node->func_name);
+    free_param_arr(node->parameters, node->num_params);
+    free_tree(node->exp);
     free(node);
 }
 
@@ -60,8 +66,12 @@ char** make_param_arr(int num_params){
  *
  * Args:
  *  param_arr: the array to free
+ *  num_params: the number of parameters
  */
-void free_param_arr(char** param_arr){
+void free_param_arr(char** param_arr, int num_params){
+    for(int i = 0; i<num_params; i++){
+        free(param_arr[i]);
+    }
     free(param_arr);
 }
 
@@ -99,6 +109,7 @@ char* pop_func(FuncNode **list){
     char* headVal = current -> func_name;
 
     *list = current->next;
+    free_func_node(current);
 
     return headVal;
 }
@@ -134,4 +145,18 @@ FuncNode* get_function(FuncNode** functions, char* func_name){
     }
     perror("function does not exist");
     exit(-1);
+}
+
+/* Frees all the elements of a funclist
+ *
+ * Args:
+ *  list: the list to free
+ */
+void free_funclist(FuncNode** list){
+    FuncNode* current = *list;
+    while(current!=NULL){
+        FuncNode* next= current->next;
+        free_func_node(current);
+        current = next;
+    }
 }
