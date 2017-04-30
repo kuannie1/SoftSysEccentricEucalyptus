@@ -10,6 +10,7 @@ We made an interpreter that evaluates the contents of a lisp file.
 # Usage
 (how to run test.lisp?)
 
+# License
 The MIT License (MIT)
 
 Copyright (c) 2013-2014 Jeff Martin
