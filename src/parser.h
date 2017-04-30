@@ -12,6 +12,7 @@
 #define parser_h
 
 #include <stdio.h>
+#include "funclist.h"
 
 typedef enum function{
     ADD,
@@ -21,7 +22,7 @@ typedef enum function{
     FLT,
     LET,
     VARNAME,
-    DEFUN
+    FUNC
 } Type;
 
 /* ast_node struct serves as the building block of our abstract
@@ -48,6 +49,8 @@ typedef struct ast_node{
 Ast_Node* make_ast_node_function(Type func, Ast_Node* left, Ast_Node* right);
 Ast_Node* make_ast_node_value(void* value, Type func);
 Ast_Node* make_ast_node_variable(char* vname, Ast_Node* var_value, Ast_Node* exp);
-Ast_Node* build_tree(FILE* code);
+Ast_Node* make_ast_node_func(char* func, Ast_Node* var_value);
+void make_func(char* name, char* parameter, Ast_Node* exp);
+void build_tree(FILE* code, Ast_Node** ast_pointer, FuncNode** func_list_pointer);
 
 #endif

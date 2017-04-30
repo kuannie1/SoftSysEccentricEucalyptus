@@ -20,13 +20,14 @@ extern FILE *yyin;
 void yyerror(char *msg);
 
 struct ast_node* ast;
-FuncNode** funclist = NULL;
+FuncNode** funclist;
 %}
 
 %union {
     float f;
     struct ast_node* node; //can't use typedefs here for some reason
     struct func_node* func;
+    // char ** param_arr;
     char* name;
     char* keyword;
 }
@@ -34,6 +35,7 @@ FuncNode** funclist = NULL;
 %token <f> NUM
 %type <node> exp S
 %type <func> decl
+// %type <param_arr> params
 %token <name> NAME
 %token <keyword> LET_KW DEFUN_KW
 %%
@@ -41,7 +43,7 @@ FuncNode** funclist = NULL;
 S : exp             {ast = $1; return 0;}
   ;
 
-decl : '(' DEFUN_KW NAME '(' NAME ')' exp ')'       {$$ = make_func($3, $5, $7);}
+decl : '(' DEFUN_KW NAME '(' NAME ')' exp ')'       {make_func($3, $5, $7);}
 
 exp : NUM                                           {$$ = make_ast_node_value((void*) &$1, FLT);}
     | '(' '*' exp exp ')'                           {$$ = make_ast_node_function(MULT, $3, $4);}
@@ -51,8 +53,9 @@ exp : NUM                                           {$$ = make_ast_node_value((v
     | '(' exp ')'                                   {$$ = $2;}
     | '(' LET_KW '(' '(' NAME exp ')' ')' exp ')'   {$$ = make_ast_node_variable($5, $6, $9);}
     | NAME                                          {$$ = make_ast_node_value((void*) $1, VARNAME);}
-    | '(' NAME exp')'
+    | '(' NAME exp ')'                              {$$ = make_ast_node_func($2, $3);}
     ;
+
 
 
 
@@ -124,6 +127,25 @@ Ast_Node* make_ast_node_variable(char* vname, Ast_Node* var_value, Ast_Node* exp
     return node;
 }
 
+
+/* 
+ *
+ * Args:
+ *
+ * Returns:
+ *  
+ */
+Ast_Node* make_ast_node_func(char* func, Ast_Node* var_value){
+    Ast_Node* node = malloc(sizeof(Ast_Node));
+    node->func = FUNC; 
+    node->val_exp = var_value; //THIS IS AN AWFUL IDEA AND NOT SCALABLE
+    node->left = NULL; // values don't have progeny
+    node->right = NULL;
+    node->next = NULL;
+    node->name = func;
+    return node;
+}
+
 void make_func(char* name, char* parameter, Ast_Node* exp){
     char** param_arr = make_param_arr(1);
     param_arr[0] = parameter;
@@ -136,17 +158,19 @@ void yyerror(char *msg){
 }
 
 /* build_tree builds an abstract syntax tree given stdin data flow
- *
+ * TODO: outdated docs
  * Args:
  *  code: a file descriptor - stdin for our usage
  *
  * Returns:
  *  ast: pointer to the head Ast_Node
  */
-Ast_Node* build_tree(FILE* code){
+void build_tree(FILE* code, Ast_Node** ast_pointer, FuncNode** func_list_pointer){
     yyin = code;
+    funclist = malloc(sizeof(FuncNode*));
     yyparse();
-    return ast;
+    *ast_pointer = ast;
+    *func_list_pointer = *funclist;
 }
 
 // int main() {
