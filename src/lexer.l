@@ -1,3 +1,13 @@
+/* Lexer.l
+ *
+ * Lexer.l contains the lexical rules to tokenize the lisp
+ * files correctly.
+ *
+ * Software Systems Spring 2017 - Olin College
+ * Eccentric Eucalyptus
+ *
+ */
+
 %{
 #include <stdio.h>
 #include <stdlib.h>
