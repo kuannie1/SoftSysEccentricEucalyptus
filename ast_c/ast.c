@@ -47,31 +47,6 @@ ast* make_variableExp( char* variableExp ) {
 	return e;
 }
 
-ast* make_callExp( char* name, ast_list* arguments ) {
-	ast* e = malloc(sizeof(ast));
-	e->tag = call_exp;
-	e->op.callExp.name = name;
-	e->op.callExp.arguments = arguments;
-	return e;
-}
-
-ast* make_projectionExp( ast* record, char* attribute ) {
-	ast* e = malloc(sizeof(ast));
-	e->tag = projection_exp;
-	e->op.projectionExp.record = record;
-	e->op.projectionExp.attribute = attribute;
-	return e;
-}
-
-ast* make_recordExp( char* attribute, ast* value, struct rec* next ) {
-	ast* e = malloc(sizeof(ast));
-	e->tag = record_exp;
-	e->op.recordExp.attribute = attribute;
-	e->op.recordExp.value = value;
-	e->op.recordExp.next = next;
-	return e;
-}
-
 ast* make_functionExp( char* name, ast* func, int num_arguments, char* arguments[] ) {
 	ast* e = malloc(sizeof(ast) + num_arguments*sizeof(char*));
 	e->tag = function_exp;

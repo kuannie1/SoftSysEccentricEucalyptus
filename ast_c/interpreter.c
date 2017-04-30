@@ -233,35 +233,45 @@ ast* make_tree(char* tokens[], int length) {
 			if ( strcmp(current->key, func_name) == 0) {
 				printf("found a function named %s!\n", current->key);
 				int num_arguments = current->function->op.functionExp.num_arguments;
-
-				for (int i = 0; i < num_arguments; i++) {
+				printf("num_arguments: %i\n", num_arguments);
+				int arg_num = 0; 
+				int i  = 0;
+				while (arg_num < num_arguments && i < length) {
 					char* arg = current->function->op.functionExp.arguments[i];
 					int val;
 					if (atoi(tokens[i+1]) != 0 || strcmp(tokens[i+1], "0") == 0 ) {
 						val = atoi(tokens[i+1]); 
+						arg_num++;
+						i++;
 					} else if (strcmp(tokens[i+1], "(") == 0 ) {
 						char* nest[length-2];
-						int numOpen = 1;
-						int numClosed = 0;
-						int j = 0; 
-						while (numOpen > numClosed && j < length-2) { 
-							nest[i] = tokens[j+3];
-							printf("%s, ", nest[j]);
-							if ( strcmp(nest[j], "(") == 0 ) {
-								numOpen += 1;
-							} else if (strcmp(nest[j], ")") == 0 ) {
-								numClosed += 1;
-							}
-							j++;
-						}
+						// int numOpen = 1;
+						// int numClosed = 0;
+						// int j = 0; 
+						// while (numOpen > numClosed && j < length-2) { 
+						// 	nest[i] = tokens[j+3];
+						// 	printf("%s, ", nest[j]);
+						// 	if ( strcmp(nest[j], "(") == 0 ) {
+						// 		numOpen += 1;
+						// 	} else if (strcmp(nest[j], ")") == 0 ) {
+						// 		numClosed += 1;
+						// 	}
+						// 	j++;
+						// }
 						printf("\n");
-						ast* tree = make_tree(nest, i);
+						int j = make_subarray(tokens, nest, i+2, length);
+						i += (j + arg_num);
+						arg_num++;
+						ast* tree = make_tree(nest, j);
 						val = eval(tree, hash);
 					}
 
 					printf("%s: %i, ", arg, val);
 					g_hash_table_insert(hash, arg, GINT_TO_POINTER(val)); //this should eventually go in a local variable space.
+					printf("(%i, %i) ", arg_num, i);
+					printf("\n %s", tokens[i+1]);
 				}
+				printf("\ninserted all arguments. ");
 				return current->function;
 			}
 			current = current->next;
