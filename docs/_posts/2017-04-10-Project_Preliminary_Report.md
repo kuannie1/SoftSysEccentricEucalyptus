@@ -1,5 +1,5 @@
 ---
-title: Preliminary Report
+title: Project Preliminary Report
 layout: post
 author: hooticambo
 permalink: /project-preliminary-report/
@@ -57,11 +57,11 @@ We also identified some learning goals in our team that may shape how we approac
 
 We made README.md files that explain each portion of our progress:
 
-* [Calculator](https://github.com/kuannie1/SoftSysEccentricEucalyptus/blob/master/calculator/prefix_calculator/prefix_calculator.md)
+* [Calculator](https://github.com/kuannie1/SoftSysEccentricEucalyptus/blob/f8b7856a831d8d3615915983c6e197d467f1ab60/calculator/prefix_calculator/prefix_calculator.md)
 
-* [Abstract Syntax Tree](https://github.com/kuannie1/SoftSysEccentricEucalyptus/tree/master/ast_c)
+* [Abstract Syntax Tree](https://github.com/kuannie1/SoftSysEccentricEucalyptus/tree/f8b7856a831d8d3615915983c6e197d467f1ab60/ast_c)
 
-* [Tokenizer](https://github.com/kuannie1/SoftSysEccentricEucalyptus/tree/master/lex_examples)
+* [Tokenizer](https://github.com/kuannie1/SoftSysEccentricEucalyptus/tree/f8b7856a831d8d3615915983c6e197d467f1ab60/lex_examples)
 
 ## Resources
 
