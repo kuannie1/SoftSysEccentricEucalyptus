@@ -32,22 +32,11 @@ We made a lisp interpreter using only C, with no external libraries such as lisp
 
 Sample input and output: 
 
-<table>
-  <tr>
-    <td>Input</td>
-    <td>Output</td>
-  </tr>
-  <tr>
-    <td>( defun func2 ( a b c ) ( + a b ) )
-( func2 5 7 9 )</td>
-    <td>answer: 12</td>
-  </tr>
-  <tr>
-    <td></td>
-    <td></td>
-  </tr>
-</table>
+`( defun func2 ( a b c ) ( + a b ) )
 
+( func2 5 7 9 )`
+
+* answer: 12
 
 ( * 5 7 )
 
@@ -79,7 +68,7 @@ Known limitations:
 
 * Every token must have white spaces between it, including nested parentheses
 
-* Eval always returns something, e
+* Eval always returns something, even when it doesn't make sense (such as for a function definition), so it returns -1, which is kind of weird. 
 
 **Authors**
 
