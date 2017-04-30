@@ -26,8 +26,6 @@ Known limitations:
 
 * No documentation in functions
 
-* Different functions must have different parameter names, or else the name space is 
-
 # **Lisp Interpreter - Parsing focused**
 
 We made a lisp interpreter using only C, with no external libraries such as lisp or yacc. It recursively builds an abstract syntax tree, then evaluates it. It supports function definitions through defun and variable definitions through defvar, and unary and binary expressions. It reads from a lisp file, then builds a tree and evaluates it. Since our focus for this part was not on the syntax tree itself, but on creating it, much of the code for the tree was borrowed from Leonidas Ferigas. However, the code that builds the tree from an input file was purely written by us.
@@ -38,7 +36,7 @@ Sample input and output:
   <tr>
     <td>( defun func2 ( a b c ) ( + a b ) )  
 ( func2 5 7 9 )</td>
-    <td></td>
+    <td>     </td>
     <td>answer: 12</td>
   </tr>
   <tr>
