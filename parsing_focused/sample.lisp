@@ -8,6 +8,5 @@
 ( func3 )
 ( defun func4 ( g h i ) ( * ( * g h ) i ) )
 ( func4 3 4 5 )
-( if t 4 5 )
+( if nil ( + 4 3 ) 5 )
 ( if nil 4 5 )
-( func2 5 ( + 1 3 ) 9 )

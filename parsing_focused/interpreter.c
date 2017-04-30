@@ -3,7 +3,7 @@ Code to build an abstract syntax tree, which is done recursively.
 
 To use, run:
 $ make interpreter
-$ ./interpreter [LISP FILE]
+$ ./interpreter <lisp file>
 
 Lisp files can contain functions defined with defun, variables defined with defvar, and unary or binary arithmetic operations. 
 Tokens in a lisp file should be separated by spaces for proper splitting. 
@@ -168,24 +168,46 @@ ast* make_tree(char* tokens[], int length) {
 		}
 	//if statement
 	} else if ( strcmp(tokens[0], "if") == 0 ) {
-		//if true
-		if ( strcmp(tokens[1], "t") == 0 ) {
+		int rightIndex;
+		ast* leftTree;
+		if (atoi(tokens[2]) != 0 || strcmp(tokens[2], "0") == 0 ) {
+			rightIndex = 3;
 			int val = atoi(tokens[2]);
-			return make_integerExp(val);
-		//if false
-		} else if ( strcmp(tokens[1], "nil") == 0 ) {
-			int val = atoi(tokens[3]);
-			return make_integerExp(val);
-		}
-		else {
-			perror("not a valid boolean operator");
+			leftTree =  make_integerExp(val);
+		} else if ( strcmp(tokens[2], "(") == 0 ) {
+			char* nest[length-3];
+			int i = make_subarray(tokens, nest, 3, length);
+			rightIndex = i+3;
+			leftTree = make_tree(nest, i);
+		} else {
+			perror("not a valid expression.");
 			exit(-1);
 		}
-	}
 
-	else {
+
+		//if true
+		if ( strcmp(tokens[1], "t") == 0 ) {
+			return leftTree;
+		//if false
+		} else if ( strcmp(tokens[1], "nil") == 0 ) {
+			if ( atoi(tokens[rightIndex]) != 0 || strcmp(tokens[rightIndex], "0") == 0 ) {
+				int val = atoi(tokens[rightIndex]);
+				return make_integerExp(val);
+			} else if ( strcmp(tokens[rightIndex], "(") == 0) {
+				char* nest[length-rightIndex];
+				int i = make_subarray(tokens, nest, rightIndex, length);
+				ast* rightTree = make_tree(nest, i);
+				return rightTree;
+			} else {
+				perror("not a valid expression");
+				exit(-1);
+			}
+		} else {
+		perror("not a valid boolean operator");
+		exit(-1);
+		}
+	} else {
 		//check if it's a function
-
 		char* func_name = tokens[0];
 		Node* current = head;
 		while (current != NULL) {
@@ -227,8 +249,10 @@ ast* make_tree(char* tokens[], int length) {
 		}
 		printf("\nNot a valid symbol %s\n", tokens[0]);
 		return NULL;
+
 	}
 }
+
 
 /* Takes a lisp file name as input and parses stuff */
 int main(int argc, char *argv[]) { 
@@ -268,6 +292,5 @@ int main(int argc, char *argv[]) {
 		}
 		fclose(f);
 	}
-
 	return 0;
 }
