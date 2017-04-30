@@ -1,6 +1,6 @@
 /* Paramlist.c
  *
- * Paramlist.c contains typetions to manipulate
+ * Paramlist.c contains functions to manipulate
  * ParamNodes, a type of linkedlist for
  * variables, defined in paramlist.h.
  *
@@ -11,6 +11,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "parser.h"
 #include "paramlist.h"
 
@@ -51,7 +52,7 @@ void print_param_list(ParamNode **list) {
 
 
 /* Removes the first variable of a list and
- * returns the varibale name removed.
+ * returns the variable name removed.
  *
  * Args:
  *  list: list to pop from
@@ -73,7 +74,6 @@ char* pop_param(ParamNode **list) {
     return name;
 }
 
-
 /* Adds a new element to the beginning of the list.
  *
  * Args:
@@ -86,6 +86,27 @@ void push_param_float(ParamNode **list, char* name, float val) {
     *list = newElement; //the list points to this new element node
 }
 
+/* Looks through the given list to find the matching variable name,
+ * and returns the corresponding value
+ *
+ * Args:
+ *  varlist: list to look through
+ *  varname: name of the variable to look for
+ *
+ * Returns:
+ *  flt: the float represented by the variable name
+ */
+float get_value(ParamNode** varlist, char* varname){
+    ParamNode *current = *varlist;
+    while (current != NULL){
+        if (strcmp(current->param_name, varname) == 0) {
+            return current->val_flt;
+        }
+        current = current->next;
+    }
+    perror("variable name does not exist");
+    exit(-1);
+}
 
 // int main() {
 //     ParamNode *node = make_node_float("x", 1, NULL);

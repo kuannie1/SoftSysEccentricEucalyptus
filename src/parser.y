@@ -13,30 +13,38 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "parser.h"
+#include "funclist.h"
 
 extern int yylex();
 extern FILE *yyin;
 void yyerror(char *msg);
 
 struct ast_node* ast;
+FuncNode** funclist;
 %}
 
 %union {
     float f;
     struct ast_node* node; //can't use typedefs here for some reason
+    struct func_node* func;
     char* name;
     char* keyword;
 }
 
 %token <f> NUM
 %type <node> exp S
-%token <name> VNAME
-%token <keyword> LET_KW
-// Make another one that's for defun later
+%type <func> decl
+%token <name> NAME
+%token <keyword> LET_KW DEFUN_KW
 %%
 
-S : exp             {ast = $1; return 0;}
+S : decls exp             {ast = $2; return 0;}
   ;
+
+decls : /*empty*/
+      | decls decl
+
+decl : '(' DEFUN_KW NAME '(' NAME ')' exp ')'       {$$ = make_func($3, $5, $7);}
 
 exp : NUM                                           {$$ = make_ast_node_value((void*) &$1, FLT);}
     | '(' '*' exp exp ')'                           {$$ = make_ast_node_function(MULT, $3, $4);}
@@ -44,9 +52,13 @@ exp : NUM                                           {$$ = make_ast_node_value((v
     | '(' '-' exp exp ')'                           {$$ = make_ast_node_function(SUBTR, $3, $4);}
     | '(' '/' exp exp ')'                           {$$ = make_ast_node_function(DIV, $3, $4);}
     | '(' exp ')'                                   {$$ = $2;}
-    | '(' LET_KW '(' '(' VNAME exp ')' ')' exp ')'  {$$ = make_ast_node_variable($5, $6, $9);}
-    | VNAME                                         {$$ = make_ast_node_value((void*) $1, VARNAME);}                 
+    | '(' LET_KW '(' '(' NAME exp ')' ')' exp ')'   {$$ = make_ast_node_variable($5, $6, $9);}
+    | NAME                                          {$$ = make_ast_node_value((void*) $1, VARNAME);}
+    | '(' NAME exp ')'                              {$$ = make_ast_node_func($2, $3);}
     ;
+
+
+
 
 %%
 
@@ -117,23 +129,65 @@ AstNode* make_ast_node_variable(char* vname, AstNode* var_value, AstNode* exp){
     return node;
 }
 
+
+/* make_ast_node_func creates an ast node that references a function
+ *
+ * Args:
+ *  func: function name
+ *  var_value: the value of the parameter to pass in
+ *
+ * Returns:
+ *  node: pointer to the newly created ast_node
+ */
+AstNode* make_ast_node_func(char* func, AstNode* var_value){
+    AstNode* node = malloc(sizeof(AstNode));
+    node->type = FUNC; 
+    node->val_exp = var_value; //THIS IS AN AWFUL IDEA AND NOT SCALABLE
+    node->left = NULL; // values don't have progeny
+    node->right = NULL;
+    node->next = NULL;
+    node->name = func;
+    return node;
+}
+
+/* make_func makes a FuncNode, pushes it to the list of functions,
+ * then returns the newly created FuncNode.
+ *
+ * Args:
+ *  name: function name as a string
+ *  parameter: parameter name as a string
+ *  exp: pointer to the function body
+ *
+ * Returns:
+ *  func: pointer to the newly created FuncNode
+ */
+FuncNode* make_func(char* name, char* parameter, AstNode* exp){
+    char** param_arr = make_param_arr(1);
+    param_arr[0] = parameter;
+    FuncNode* func = make_func_node(name, param_arr, exp, NULL);
+    push_func(funclist, func);
+    return func;
+}
+
 void yyerror(char *msg){
     fprintf(stderr, "%s\n", msg);
     exit(1);
 }
 
+
 /* build_tree builds an abstract syntax tree given a file descriptor
  *
  * Args:
  *  code: a file descriptor containing lisp code
- *
- * Returns:
- *  ast: pointer to the head AstNode
+ *  ast_pointer: pointer to AstNode to pack
+ *  func_list_pointer: pointer to funclist to pack
  */
-AstNode* build_tree(FILE* code){
+void build_tree(FILE* code, AstNode** ast_pointer, FuncNode** func_list_pointer){
     yyin = code;
+    funclist = malloc(sizeof(FuncNode*));
     yyparse();
-    return ast;
+    *ast_pointer = ast;
+    *func_list_pointer = *funclist;
 }
 
 // int main() {

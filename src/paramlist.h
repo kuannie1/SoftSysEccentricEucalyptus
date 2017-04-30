@@ -40,5 +40,6 @@ ParamNode *make_param_node_float(char* name, float val, ParamNode *next);
 void print_param_list(ParamNode **list);
 char* pop_param(ParamNode **list);
 void push_param_float(ParamNode **list, char* name, float val);
+float get_value(ParamNode** varlist, char* varname);
 
 #endif

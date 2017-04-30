@@ -14,6 +14,7 @@
 #define parser_h
 
 #include <stdio.h>
+#include "funclist.h"
 
 /* Type is an enum that stores the type of AstNode. Includes
  * operators such as add, multiply, subtract; data types such
@@ -27,7 +28,7 @@ typedef enum{
     FLT,
     LET,
     VARNAME,
-    LAMBDA
+    FUNC
 } Type;
 
 /* ast_node struct serves as the building block of our abstract
@@ -59,9 +60,12 @@ typedef struct ast_node{
     struct ast_node *next;
 }AstNode;
 
+
 AstNode* make_ast_node_function(Type func, AstNode* left, AstNode* right);
 AstNode* make_ast_node_value(void* value, Type func);
 AstNode* make_ast_node_variable(char* vname, AstNode* var_value, AstNode* exp);
-AstNode* build_tree(FILE* code);
+AstNode* make_ast_node_func(char* func, AstNode* var_value);
+FuncNode* make_func(char* name, char* parameter, AstNode* exp);
+void build_tree(FILE* code, AstNode** ast_pointer, FuncNode** func_list_pointer);
 
 #endif
