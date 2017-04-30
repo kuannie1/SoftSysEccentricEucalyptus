@@ -1,10 +1,9 @@
 ---
-title: Project Proposal
 layout: post
+title: Project Proposal
 cover: cover.jpg
 date:   2017-27-03 12:00:00
 categories: posts
-published: true
 ---
 # Project Proposal - Eccentric Eucalyptus
 
