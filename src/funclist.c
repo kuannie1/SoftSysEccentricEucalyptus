@@ -22,6 +22,7 @@
  *  parameters: the parameters as an array of strings
  *  exp: the function body
  *  next: the node that follows this
+ *  num_params: the number of parameters
  *
  * Returns:
  *  node: the pointer to the new node
@@ -65,6 +66,7 @@ char** make_param_arr(int num_params){
  *
  * Args:
  *  param_arr: the array to free
+ *  num_params: the number of parameters
  */
 void free_param_arr(char** param_arr, int num_params){
     for(int i = 0; i<num_params; i++){
