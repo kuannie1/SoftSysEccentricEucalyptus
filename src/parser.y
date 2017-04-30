@@ -68,16 +68,16 @@ exp : NUM                                           {$$ = make_ast_node_value((v
  * a calculator like function such as additon, or multiplication.
  *
  * Args:
- *  func: enum Type
- *  left: pointer to an ast_node
- *  right: pointer to an ast_node
+ *  type: enum Type, in this case, specifying the operator
+ *  left: pointer to the left ast_node operand
+ *  right: pointer to the right ast_node operand
  *
  * Returns:
  *  node: pointer to the newly created ast_node
  */
-Ast_Node* make_ast_node_function(Type func, Ast_Node* left, Ast_Node* right){
-    Ast_Node* node = malloc(sizeof(Ast_Node));
-    node->func = func;
+AstNode* make_ast_node_function(Type type, AstNode* left, AstNode* right){
+    AstNode* node = malloc(sizeof(AstNode));
+    node->type = type;
     node->left = left;
     node->right = right;
     node->next = NULL;
@@ -88,17 +88,18 @@ Ast_Node* make_ast_node_function(Type func, Ast_Node* left, Ast_Node* right){
  * a value
  *
  * Args:
- *  value: numerical value that ast_node should hold
+ *  value: value that ast_node should hold
+ *  type: enum Type, either a float or variable name
  *
  * Returns:
  *  node: pointer to the newly created ast_node
  */
-Ast_Node* make_ast_node_value(void* value, Type func){
-    Ast_Node* node = malloc(sizeof(Ast_Node));
-    node->func = func; 
-    if (func == FLT) {
+AstNode* make_ast_node_value(void* value, Type type){
+    AstNode* node = malloc(sizeof(AstNode));
+    node->type = type; 
+    if (type == FLT) {
         node->val_flt = *(float*) value;
-    } else if (func == VARNAME) {
+    } else if (type == VARNAME) {
         node->val_name = (char*) value;
     }
     
@@ -119,9 +120,9 @@ Ast_Node* make_ast_node_value(void* value, Type func){
  * Returns:
  *  node: pointer to the newly created ast_node
  */
-Ast_Node* make_ast_node_variable(char* vname, Ast_Node* var_value, Ast_Node* exp){
-    Ast_Node* node = malloc(sizeof(Ast_Node));
-    node->func = LET; 
+AstNode* make_ast_node_variable(char* vname, AstNode* var_value, AstNode* exp){
+    AstNode* node = malloc(sizeof(AstNode));
+    node->type = LET; 
     node->val_exp = var_value;
     node->left = NULL; // values don't have progeny
     node->right = NULL;
@@ -162,15 +163,19 @@ void yyerror(char *msg){
     exit(1);
 }
 
-/* build_tree builds an abstract syntax tree given stdin data flow
- * TODO: outdated docs
- * Args:
- *  code: a file descriptor - stdin for our usage
+
+/* build_tree builds an abstract syntax tree given a file descriptor
  *
- * Returns:
- *  ast: pointer to the head Ast_Node
+ * Args:
+ *  code: a file descriptor containing lisp code
+ *  ast_pointer: pointer to AstNode to pack
+ *  func_list_pointer: pointer to funclist to pack
  */
-void build_tree(FILE* code, Ast_Node** ast_pointer, FuncNode** func_list_pointer){
+<<<<<<< HEAD
+void build_tree(FILE* code, AstNode** ast_pointer, FuncNode** func_list_pointer){
+=======
+AstNode* build_tree(FILE* code){
+>>>>>>> d219d86406d5ac5db80a38da01e29b7dab5382cc
     yyin = code;
     funclist = malloc(sizeof(FuncNode*));
     yyparse();
@@ -180,6 +185,6 @@ void build_tree(FILE* code, Ast_Node** ast_pointer, FuncNode** func_list_pointer
 
 // int main() {
 //      printf("%i\n", yyparse());
-//      printf("%i\n", ast->func);
+//      printf("%i\n", ast->type);
 //      return 0;
 // }

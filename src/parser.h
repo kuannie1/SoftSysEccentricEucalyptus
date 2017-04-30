@@ -1,7 +1,9 @@
 /* Parser.h
  *
  * Parser.h is a header file that declares and defines the enums,
- * functions, unions, and structs that will be used in Parser.y
+ * functions, unions, and structs that will be used in parser.y
+ * and throughout the project. It defines the structure of the
+ * Abstract Syntax Tree.
  *
  * Software Systems Spring 2017 - Olin College
  * Eccentric Eucalyptus
@@ -14,7 +16,11 @@
 #include <stdio.h>
 #include "funclist.h"
 
-typedef enum function{
+/* Type is an enum that stores the type of AstNode. Includes
+ * operators such as add, multiply, subtract; data types such
+ * as float; and other functions such as let.
+ */
+typedef enum{
     ADD,
     MULT,
     SUBTR,
@@ -29,13 +35,21 @@ typedef enum function{
  * syntax tree.
  *
  * Members:
- *  func: enum Type type
+ *  type: enum Type, the type of Node
  *  left: pointer to an ast_node
  *  right: pointer to an ast_node
- *  value: numerical union
+ *  anonymous union:
+ *      val_flt, val_exp, val_name: storing values of different
+ *                                  types
+ *  name: used if the node can be identified with a name (in
+ *          the case of let)
+ *  next: if there is a continuation of a tree that does not
+ *      fit in the left/right node structure. For example, in
+ *      let, there is a body of code for which the new variable
+ *      is part of the environment.
  */
 typedef struct ast_node{
-    Type func;
+    Type type;
     struct ast_node *left, *right;
     union {
         float val_flt;
@@ -44,13 +58,14 @@ typedef struct ast_node{
     };
     char* name;
     struct ast_node *next;
-}Ast_Node;
+}AstNode;
 
-Ast_Node* make_ast_node_function(Type func, Ast_Node* left, Ast_Node* right);
-Ast_Node* make_ast_node_value(void* value, Type func);
-Ast_Node* make_ast_node_variable(char* vname, Ast_Node* var_value, Ast_Node* exp);
-Ast_Node* make_ast_node_func(char* func, Ast_Node* var_value);
-FuncNode* make_func(char* name, char* parameter, Ast_Node* exp);
-void build_tree(FILE* code, Ast_Node** ast_pointer, FuncNode** func_list_pointer);
+
+AstNode* make_ast_node_function(Type func, AstNode* left, AstNode* right);
+AstNode* make_ast_node_value(void* value, Type func);
+AstNode* make_ast_node_variable(char* vname, AstNode* var_value, AstNode* exp);
+Ast_Node* make_ast_node_func(char* func, AstNode* var_value);
+FuncNode* make_func(char* name, char* parameter, AstNode* exp);
+void build_tree(FILE* code, AstNode** ast_pointer, FuncNode** func_list_pointer);
 
 #endif
