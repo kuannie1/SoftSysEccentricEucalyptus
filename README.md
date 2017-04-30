@@ -14,13 +14,7 @@ exploration into how to build an abstract syntax tree and interpret it.
 
 
 ## Authors
-[Annie Ku](https://github.com/kuannie1)
-
-[Margo Crawford](https://github.com/Margaretmcrawf)
-
-[Nathan Yee](https://github.com/NathanYee)
-
-[Serena Chen](https://github.com/poosomooso)
+[Annie Ku](https://github.com/kuannie1), [Margo Crawford](https://github.com/Margaretmcrawf), [Nathan Yee](https://github.com/NathanYee), [Serena Chen](https://github.com/poosomooso)
 
 ## Getting Started
 ```bash
