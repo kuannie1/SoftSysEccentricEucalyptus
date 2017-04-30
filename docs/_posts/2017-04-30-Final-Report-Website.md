@@ -1,10 +1,8 @@
 ---
-title: eLISP-Cs
+title: Final Report Website
 layout: post
+author: hooticambo
 permalink: /final-report-website/
-cover: cover.jpg
-date:   2017-04-30 12:48:35
-categories: posts
 source-id: 1oKZ7hCTr_D9rOoWEyee8ANtBtfWQYGjwUxBCEpMIeyQ
 published: true
 ---
@@ -34,11 +32,22 @@ We made a lisp interpreter using only C, with no external libraries such as lisp
 
 Sample input and output: 
 
-( defun func2 ( a b c ) ( + a b ) )
+<table>
+  <tr>
+    <td>Input</td>
+    <td>Output</td>
+  </tr>
+  <tr>
+    <td>( defun func2 ( a b c ) ( + a b ) )
+( func2 5 7 9 )</td>
+    <td>answer: 12</td>
+  </tr>
+  <tr>
+    <td></td>
+    <td></td>
+  </tr>
+</table>
 
-( func2 5 7 9 )
-
-answer: 12
 
 ( * 5 7 )
 
@@ -54,6 +63,12 @@ answer: 34
 
 answer: 195
 
+( defun func3 ( ) ( 18 ) )
+
+( func3 )
+
+	answer: 18
+
 Known limitations:
 
 * inputs to functions cannot be non-integers
@@ -64,15 +79,11 @@ Known limitations:
 
 * Every token must have white spaces between it, including nested parentheses
 
+* Eval always returns something, e
+
 **Authors**
 
-[Annie Ku](https://github.com/kuannie1)
-
-[Margo Crawford](https://github.com/Margaretmcrawf)
-
-[Nathan Yee](https://github.com/NathanYee)
-
-[Serena Chen](https://github.com/poosomooso)
+[Annie Ku](https://github.com/kuannie1), [Margo Crawford](https://github.com/Margaretmcrawf), [Nathan Yee](https://github.com/NathanYee), [Serena Chen](https://github.com/poosomooso)
 
 # **Getting Started**
 
