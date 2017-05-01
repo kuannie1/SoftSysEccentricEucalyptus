@@ -222,14 +222,6 @@ ast* make_tree(char* tokens[], int length) {
 						val = atoi(tokens[i+1]); 
 						arg_num++;
 						i++;
-					} else if (strcmp(tokens[i+1], "(") == 0 ) {
-						char* nest[length-2];
-						printf("\nnest");
-						int j = make_subarray(tokens, nest, i+2, length);
-						i += (j + arg_num);
-						arg_num++;
-						ast* tree = make_tree(nest, j);
-						val = eval(tree, hash);
 					} else {
 						perror("not a valid input. ");
 						exit(-1);
@@ -237,11 +229,8 @@ ast* make_tree(char* tokens[], int length) {
 
 					char* arg = malloc(sizeof(arg_original));
 					strcpy(arg, arg_original);
-					printf("%s: %i, ", arg, val);
 					gpointer* val_pointer = GINT_TO_POINTER(val);
-
 					g_hash_table_insert(hash, arg, val_pointer); //this should eventually go in a local variable space.
-					printf("(%i, %i) ", arg_num, i);
 				}
 				return current->function;
 			}
