@@ -195,7 +195,7 @@ ast* make_tree(char* tokens[], int length) {
 				return make_integerExp(val);
 			} else if ( strcmp(tokens[rightIndex], "(") == 0) {
 				char* nest[length-rightIndex];
-				int i = make_subarray(tokens, nest, rightIndex, length);
+				int i = make_subarray(tokens, nest, rightIndex+1, length);
 				ast* rightTree = make_tree(nest, i);
 				return rightTree;
 			} else {
@@ -250,7 +250,7 @@ int main(int argc, char *argv[]) {
 
 	if (argc > 1) {
 
-		printf("-----\nreading from lisp file.\n");
+		printf("-----\nreading from lisp file.\n\n");
 
 		FILE *f = fopen(argv[1], "r");
 
