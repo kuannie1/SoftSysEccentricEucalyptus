@@ -66,6 +66,13 @@ ast* make_tree(char* tokens[], int length) {
 	else if (g_hash_table_lookup(hash, tokens[0]) != NULL) {
 		return make_variableExp(tokens[0]);
 	}
+	//case: t or nil
+	else if (strcmp(tokens[0], "t") == 0) {
+		return make_integerExp(1);
+	}
+	else if (strcmp(tokens[0], "nil") == 0) {
+		return make_integerExp(0);
+	}
 	//case: variable definition
 	else if (strcmp(tokens[0],"defvar") == 0 ) {
 		char* varName = tokens[2];
@@ -166,42 +173,93 @@ ast* make_tree(char* tokens[], int length) {
 			ast* retval = make_unaryExp(tokens[0], leftTree);
 			return retval;
 		}
-	//if statement
+	//case: comparison
+	 } else if ( strcmp(tokens[0], ">=") == 0 || strcmp(tokens[0], "<=") == 0 || strcmp(tokens[0], ">") == 0 || strcmp(tokens[0], "<") == 0 || strcmp(tokens[0], "eq") == 0 ) {
+	 	ast* leftTree;
+		int rightIndex;
+		//nested case
+		if ( strcmp(tokens[1],"(") == 0 ){
+			char* nest[length-2];
+			int i = make_subarray(tokens, nest, 2, length);
+			leftTree = make_tree(nest, i);
+			rightIndex = i+2;
+		}
+		//non-nested case
+		else {
+			char* nest[] = {tokens[1]};
+			leftTree = make_tree(nest, 1);
+			rightIndex = 2;
+		}
+		//shit's binary
+		if ( strcmp(tokens[rightIndex], ")") != 0 ) {
+
+			ast* rightTree;
+			if ( strcmp(tokens[rightIndex],"(") == 0 ) { 
+				char* nest[length-2];
+				int i = make_subarray(tokens, nest, rightIndex+1, length);
+				rightTree = make_tree(nest, i);
+			} else {
+				char* nest[] = {tokens[rightIndex]};
+				rightTree = make_tree(nest, 1);
+			}
+			ast* retval = make_binaryExp(tokens[0], leftTree, rightTree);
+			return retval;
+		}
+
+	//case: if statement
 	} else if ( strcmp(tokens[0], "if") == 0 ) {
+		int leftIndex;
+		ast* expr;
+		if (strcmp(tokens[1], "(") == 0	) {
+			//a more complicated conditional.	
+			char* nest[length - 4];
+			int i = make_subarray(tokens, nest, 2, length);
+			expr = make_tree(nest, i);
+			leftIndex = i + 2;
+			printf("leftIndex: %i\n", leftIndex);	
+		} else {
+			//t or nil-- the easy cases
+			leftIndex = 2;
+		} 
 		int rightIndex;
 		ast* leftTree;
-		if (atoi(tokens[2]) != 0 || strcmp(tokens[2], "0") == 0 ) {
-			rightIndex = 3;
-			int val = atoi(tokens[2]);
+		if (atoi(tokens[leftIndex]) != 0 || strcmp(tokens[leftIndex], "0") == 0 ) {
+			rightIndex = leftIndex+1;
+			int val = atoi(tokens[leftIndex]);
 			leftTree =  make_integerExp(val);
-		} else if ( strcmp(tokens[2], "(") == 0 ) {
+		} else if ( strcmp(tokens[leftIndex], "(") == 0 ) {
 			char* nest[length-3];
-			int i = make_subarray(tokens, nest, 3, length);
-			rightIndex = i+3;
+			int i = make_subarray(tokens, nest, leftIndex+1, length);
+			rightIndex = i+leftIndex+1;
 			leftTree = make_tree(nest, i);
 		} else {
 			perror("not a valid expression.");
 			exit(-1);
 		}
-
-
 		//if true
 		if ( strcmp(tokens[1], "t") == 0 ) {
 			return leftTree;
-		//if false
-		} else if ( strcmp(tokens[1], "nil") == 0 ) {
-			if ( atoi(tokens[rightIndex]) != 0 || strcmp(tokens[rightIndex], "0") == 0 ) {
-				int val = atoi(tokens[rightIndex]);
-				return make_integerExp(val);
-			} else if ( strcmp(tokens[rightIndex], "(") == 0) {
-				char* nest[length-rightIndex];
-				int i = make_subarray(tokens, nest, rightIndex+1, length);
-				ast* rightTree = make_tree(nest, i);
-				return rightTree;
-			} else {
-				perror("not a valid expression");
-				exit(-1);
+		}
+		//else
+		ast* rTree;
+		if (atoi(tokens[rightIndex]) != 0 || strcmp(tokens[rightIndex], "0") == 0 ) {
+			int val = atoi(tokens[rightIndex]);
+			rTree = make_integerExp(val);
+		} else if ( strcmp(tokens[rightIndex], "(") == 0) {
+			char* nest[length-rightIndex];
+			int i = make_subarray(tokens, nest, rightIndex+1, length);
+			rTree = make_tree(nest, i);
+		} else {
+			perror("not a valid expression");
+			exit(-1);
 			}
+		//if false
+		if (strcmp(tokens[1], "nil") == 0 ) {
+			return rTree;
+		//if conditional expression
+		} else if (expr != NULL && expr->tag == binary_exp ) {
+			ast* conditional = make_conditionalExp(expr, leftTree, rTree);
+			return conditional;	
 		} else {
 		perror("not a valid boolean operator");
 		exit(-1);
@@ -261,7 +319,7 @@ int main(int argc, char *argv[]) {
 			if (fgets(line, 80, f) == NULL) break;
 			token = strtok(line, " ");
 
-			char* tokens[20]; //I need to have some limit on how many symbols in a line, but this is arbitrary.
+			char* tokens[30]; //I need to have some limit on how many symbols in a line, but this is arbitrary.
 			int i = 0;
 			while (token) {
 				if (i != 0) {
@@ -276,7 +334,7 @@ int main(int argc, char *argv[]) {
 			if (eval(tree, hash) != NULL) {
 				printf("\nanswer: %i\n\n", val);
 			} else {
-				printf("\n\n");
+				printf("\n");
 			}
 		}
 		fclose(f);

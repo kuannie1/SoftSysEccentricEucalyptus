@@ -47,6 +47,15 @@ ast* make_variableExp( char* variableExp ) {
 	return e;
 }
 
+ast* make_conditionalExp( ast* condition, ast* left, ast* right ) {
+	ast* e = malloc(sizeof(ast));
+	e->tag = conditional_exp;
+	e->op.conditionalExp.condition = condition;
+	e->op.conditionalExp.left = left;
+	e->op.conditionalExp.right = right;
+	return e;
+}
+
 ast* make_functionExp( char* name, ast* func, int num_arguments, char* arguments[] ) {
 	ast* e = malloc(sizeof(ast) + num_arguments*sizeof(char*));
 	e->tag = function_exp;

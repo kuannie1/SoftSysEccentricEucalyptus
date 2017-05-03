@@ -2,7 +2,7 @@ typedef struct Exp {
 
 	enum { integer_exp, string_exp, variable_exp,
 		binary_exp, unary_exp,
-		function_exp } tag;
+		function_exp, conditional_exp } tag;
 
 	union {
 		int integerExp;
@@ -15,6 +15,10 @@ typedef struct Exp {
 		//a unary operation (like a negative sign)
 		struct { char* operator;
 			struct Exp* operand; } unaryExp;
+		//conditional
+		struct { struct Exp* condition;
+				struct Exp* left;
+				struct Exp* right; } conditionalExp;
 		//function
 		struct { char* name;
 			struct Exp* func;
@@ -30,4 +34,5 @@ ast *make_unaryExp( char* operator, ast* operand );
 ast *make_integerExp( int integerExp );
 ast* make_stringExp( char* stringExp );
 ast* make_variableExp( char* variableExp );
+ast* make_conditionalExp( ast* condition, ast* left, ast* right );
 ast* make_functionExp( char* name, ast* func, int num_arguments, char* arguments[] );

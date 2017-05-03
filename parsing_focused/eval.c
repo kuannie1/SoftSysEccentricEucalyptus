@@ -34,6 +34,14 @@ int eval(ast* expression, GHashTable* vars) {
 			return rightside * leftside;
 		} else if (strcmp(operator,"/") == 0) {
 			return leftside / rightside;
+		} else if (strcmp(operator, ">=") == 0) {
+			return (leftside >= rightside) ? 1 : 0;
+		} else if (strcmp(operator, "<=") == 0) {
+			return (leftside <= rightside) ? 1 : 0;
+		} else if (strcmp(operator, ">") == 0) {
+		return(leftside > rightside) ? 1 : 0;
+		} else if (strcmp(operator, "<") == 0) {
+		return	(leftside < rightside) ? 1 : 0;
 		} else {
 			printf("You entered the binary operator %s. This isnt supported yet.\n", operator);
 		}
@@ -63,5 +71,9 @@ int eval(ast* expression, GHashTable* vars) {
 	//function
 	else if ( expression->tag == function_exp ) {
 		return eval(expression->op.functionExp.func, vars);
+	} else if (expression->tag == conditional_exp) {
+		//printf("conditional exp!");
+		int boolean = eval(expression->op.conditionalExp.condition, vars);
+		return ( boolean == 1) ? eval(expression->op.conditionalExp.left, vars) : eval(expression->op.conditionalExp.right, vars);
 	}
 }
