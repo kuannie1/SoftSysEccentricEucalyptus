@@ -216,7 +216,6 @@ ast* make_tree(char* tokens[], int length) {
 			int i = make_subarray(tokens, nest, 2, length);
 			expr = make_tree(nest, i);
 			leftIndex = i + 2;
-			printf("leftIndex: %i\n", leftIndex);	
 		} else {
 			//t or nil-- the easy cases
 			leftIndex = 2;
