@@ -5,7 +5,7 @@ To use, run:
 $ make interpreter
 $ ./interpreter <lisp file>
 
-Lisp files can contain functions defined with defun, variables defined with defvar, and unary or binary arithmetic operations. 
+Lisp files can contain functions defined with defun, variables defined with defvar, if statements with conditions, nil or t, and unary or binary arithmetic operations. 
 Tokens in a lisp file should be separated by spaces for proper splitting. 
 
 */
@@ -222,18 +222,15 @@ ast* make_tree(char* tokens[], int length) {
 		} 
 		int rightIndex;
 		ast* leftTree;
-		if (atoi(tokens[leftIndex]) != 0 || strcmp(tokens[leftIndex], "0") == 0 ) {
-			rightIndex = leftIndex+1;
-			int val = atoi(tokens[leftIndex]);
-			leftTree =  make_integerExp(val);
-		} else if ( strcmp(tokens[leftIndex], "(") == 0 ) {
+		if ( strcmp(tokens[leftIndex], "(") == 0 ) {
 			char* nest[length-3];
 			int i = make_subarray(tokens, nest, leftIndex+1, length);
 			rightIndex = i+leftIndex+1;
 			leftTree = make_tree(nest, i);
 		} else {
-			perror("not a valid expression.");
-			exit(-1);
+			char* nest[] = {tokens[leftIndex]};
+			leftTree = make_tree(nest, 1);
+			rightIndex = leftIndex+1;
 		}
 		//if true
 		if ( strcmp(tokens[1], "t") == 0 ) {
@@ -241,16 +238,13 @@ ast* make_tree(char* tokens[], int length) {
 		}
 		//else
 		ast* rTree;
-		if (atoi(tokens[rightIndex]) != 0 || strcmp(tokens[rightIndex], "0") == 0 ) {
-			int val = atoi(tokens[rightIndex]);
-			rTree = make_integerExp(val);
-		} else if ( strcmp(tokens[rightIndex], "(") == 0) {
+		if ( strcmp(tokens[rightIndex], "(") == 0) {
 			char* nest[length-rightIndex];
 			int i = make_subarray(tokens, nest, rightIndex+1, length);
 			rTree = make_tree(nest, i);
 		} else {
-			perror("not a valid expression");
-			exit(-1);
+			char* nest[] = {tokens[rightIndex]};
+			rTree = make_tree(nest, 1);
 			}
 		//if false
 		if (strcmp(tokens[1], "nil") == 0 ) {

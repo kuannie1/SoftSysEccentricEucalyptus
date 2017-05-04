@@ -1,6 +1,6 @@
 /*
 Evaluates an abstract syntax tree in C, using the ast struct by Leonidas Farigas. 
-Currently supports: addition, subtraction, multiplication, divition, negative numbers, integer variables.
+Currently supports: addition, subtraction, multiplication, divition, negative numbers, integer variables, less than, greater than, equal to or less than, and equal to or greater than. 
 By Margo Crawford.
 
 */
